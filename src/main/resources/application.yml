@@ -37,3 +37,10 @@ upload:
   path: C:\KDT\projects\uploads\bbs
   url-prefix: /static/uploads
 
+naver:
+  map:
+    client-id:    ${NAVER_MAPS_CLIENT_ID}
+    rest:
+      access-key: ${NAVER_MAPS_CLIENT_ID}
+      secret-key: ${NAVER_MAPS_CLIENT_SECRET}
+      base-url:   https://naveropenapi.apigw.ntruss.com

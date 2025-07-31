@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  <title>지도 검색 및 표시</title>
+  <script
+          th:src="'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=' + ${naverMapProps.clientId}"
+          type="text/javascript">
+  </script>
+  <style>
+    #bounds-info {
+      margin-top: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      background: rgba(255,255,255,0.8);
+      padding: 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<div>
+  <input type="text" id="address-input" placeholder="주소를 입력하세요" style="width:70%; padding:8px;" />
+  <button id="search-btn" style="padding:8px 12px;">검색</button>
+  <button id="bounds-btn" style="padding:8px 12px; margin-left:4px;">범위 확인</button>
+</div>
+<div id="map" style="width:100%; height:400px; margin-top:10px;"></div>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+<!--  // 2) 올바른 zoom 값 사용 (예: 13)-->
+  var mapOptions = {
+    center: new naver.maps.LatLng(35.1473414, 129.0592518),
+    zoom: 16
+  };
+
+<!--  // 3) map 생성은 여기서!-->
+  var map = new naver.maps.Map('map', mapOptions);
+<!--  // 4) marker도 미리 선언-->
+  var marker = new naver.maps.Marker({ map: map });
+
+<!--  // 즉시 확인-->
+  console.log("현재 줌 레벨:", map.getZoom());
+
+<!--  // 줌 변경 감지-->
+  naver.maps.Event.addListener(map, 'zoom_changed', function() {
+    console.log("줌이", map.getZoom(), "로 변경되었습니다.");
+  });
+
+<!--   // 검색 기능-->
+  document.getElementById('search-btn').onclick = async function() {
+    var query = document.getElementById('address-input').value;
+    if (!query) return;
+    var res  = await fetch('/map/geocode?query=' + encodeURIComponent(query));
+    var data = await res.json();
+    if (!data.addresses || data.addresses.length === 0) {
+      alert('검색 결과가 없습니다.');
+      return;
+    }
+    var item = data.addresses[0];
+    var pos  = new naver.maps.LatLng(parseFloat(item.y), parseFloat(item.x));
+    map.setCenter(pos);
+    marker.setPosition(pos);
+  };
+
+<!--   // 범위 확인 기능-->
+  document.getElementById('bounds-btn').onclick = function() {
+    var b = map.getBounds();
+    // LatLngBoundsLiteral 에 north, east, south, west 프로퍼티 사용
+    var sw = new naver.maps.LatLng(b.south, b.west);
+    var ne = new naver.maps.LatLng(b.north, b.east);
+    var info = 'SW: (' + sw.lat().toFixed(6) + ', ' + sw.lng().toFixed(6) + ')<br>' +
+               'NE: (' + ne.lat().toFixed(6) + ', ' + ne.lng().toFixed(6) + ')';
+    document.getElementById('bounds-info').innerHTML = info;
+  };
+
+<!--  // 지도 idle 시에도 자동 갱신하려면:-->
+   naver.maps.Event.addListener(map, 'idle', function() {
+     document.getElementById('bounds-btn').click();
+   });
+  /*]]>*/
+</script>
+</body>
+</html>
