@@ -5,19 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fc470a1-286f-4360-ab34-5292c3cb0de6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/config/naverMap.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/map/naverMap/MapController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/AddressInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/js/naverMap/page.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page_bak.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hs_err_pid10184.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hs_err_pid11068.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hs_err_pid9136.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/replay_pid11068.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/replay_pid4392.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/replay_pid9136.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/config/naverMap$Rest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/config/naverMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/map/naverMap/MapController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/map/naverMap/MapController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/naverMap/page.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/naverMap/page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/config/naverMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/config/NaverProps.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/map/naverMap/MapController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/map/naverMap/MapController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,8 +48,8 @@
         <option value="package-info" />
         <option value="HTML File" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="Thymeleaf" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -65,7 +72,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/KDT/projects/EXBbs/src/main/resources/static/js/community/bbs/csr&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/KDT/projects/naver_map/src/main/resources/templates/naverMap&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
@@ -74,11 +81,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\KDT\projects\naver_map\src\main\resources\templates\naverMap" />
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\static\js\community\bbs\csr" />
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\templates\postBoards" />
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\static\css\community" />
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\static\css" />
-      <recent name="D:\study\project\EXBbs\src\main\resources\static\js\community\bbs\csr" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\templates\postBoards\old2" />

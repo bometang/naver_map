@@ -1,59 +1,168 @@
 package com.KDT.mosi.domain.naverMap.svc;
 
-import com.KDT.mosi.web.config.naverMap;
+import com.KDT.mosi.domain.entity.map.naverMap.AddressInfo;
+import com.KDT.mosi.domain.entity.map.naverMap.LocalSearchRes;
+import com.KDT.mosi.web.config.NaverProps;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class naverMapSVCImpl implements naverMapSVC{
-  private final naverMap props;
+  private final NaverProps props;
   private final RestTemplate rest = new RestTemplate();
 
-  /** GET 방식으로 geocode 호출 */
+
+  // 사용자 입력 주소값을 네이버 검색api를 통해  위도,경도로 변경
+  /* ------------------------------------------------------------------
+   *  키워드 → 지번주소 10건 반환 (네이버 지역검색 OpenAPI)
+   * ------------------------------------------------------------------ */
   @Override
-  public String geocode(String query){
-    String apiPath   = "/map-geocode/v2/geocode?query=" +
-        URLEncoder.encode(query, StandardCharsets.UTF_8);
-    String timestamp = String.valueOf(Instant.now().toEpochMilli());
-    String signature = makeSignature("GET", apiPath, timestamp);
+  public List<AddressInfo> fetchAddresses(String keyword) {
+    log.info("fetchAddresses 호출 - keyword=[{}]", keyword);
+
+    // 1) 키워드 URL-인코딩
+    String encoded;
+    try {
+      encoded = URLEncoder.encode(keyword, StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("키워드 인코딩 실패", e);
+    }
+    log.info("인코딩된 keyword=[{}]", encoded);
+
+    // 2) 요청 URL
+    String apiURL = props.getOpen().getBaseUrl()
+        + "/v1/search/local.json?query=" + encoded
+        + "&display=10";
+    log.info("▶ Request URL: {}", apiURL);
+
+    HttpURLConnection con = null;
+    try {
+      // 3) HttpURLConnection 설정
+      URL url = new URL(apiURL);
+      con = (HttpURLConnection) url.openConnection();
+      con.setRequestMethod("GET");
+      con.setRequestProperty("X-Naver-Client-Id",     props.getOpen().getClientId());
+      con.setRequestProperty("X-Naver-Client-Secret", props.getOpen().getClientSecret());
+      con.setRequestProperty("Accept", "application/json");
+
+      log.info("▶ Request Method: {}", con.getRequestMethod());
+      log.info("▶ Request Headers: {}", con.getRequestProperties());
+
+      // 4) 응답 수신
+      int code = con.getResponseCode();
+      log.info("▶ Response Code: {}", code);
+      InputStream stream = (code == HttpURLConnection.HTTP_OK)
+          ? con.getInputStream()
+          : con.getErrorStream();
+
+      String responseBody = readBody(stream);
+      log.info("▶ Response Body: {}", responseBody);
+
+      // 5) JSON → DTO 매핑
+      ObjectMapper mapper = new ObjectMapper();
+      LocalSearchRes res = mapper.readValue(responseBody, LocalSearchRes.class);
+      log.info("▶ 응답 items 수=[{}]", res.getItems().size());
+
+      // 6) DTO → AddressInfo 변환
+      List<AddressInfo> result = res.getItems().stream()
+          .map(item -> {
+            log.info("   item.address=[{}], item.roadAddress=[{}]",
+                item.getAddress(), item.getRoadAddress());
+            return new AddressInfo(item.getAddress(), item.getRoadAddress());
+          })
+          .collect(Collectors.toList());
+
+      log.info("▶ 최종 반환 AddressInfo 개수=[{}]", result.size());
+      return result;
+
+    } catch (IOException e) {
+      log.error("HTTP 요청 실패", e);
+      return Collections.emptyList();
+    } finally {
+      if (con != null) {
+        con.disconnect();
+      }
+    }
+  }
+
+  // InputStream → String
+  private String readBody(InputStream stream) throws IOException {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+      StringBuilder sb = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        sb.append(line);
+      }
+      return sb.toString();
+    }
+  }
+
+
+
+  @Override
+  public String geocode(String query) {
+    String apiPath = "/map-geocode/v2/geocode?query=" + query;
+
+    log.info("요청 URL: https://maps.apigw.ntruss.com{}", apiPath);
+    log.info("AccessKey: {}", props.getGateway().getAccessKey());
+    log.info("SecretKey: {}", props.getGateway().getSecretKey());
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add("X-NCP-APIGW-API-KEY-ID",     props.getRest().getAccessKey());
-    headers.add("X-NCP-APIGW-TIMESTAMP",      timestamp);
-    headers.add("X-NCP-APIGW-SIGNATURE-V2",   signature);
+    headers.add("X-NCP-APIGW-API-KEY-ID", props.getGateway().getAccessKey());
+    headers.add("X-NCP-APIGW-API-KEY", props.getGateway().getSecretKey());
+    headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
 
-    String url = props.getRest().getBaseUrl() + apiPath;
-    ResponseEntity<String> resp = rest.exchange(url, HttpMethod.GET,
-        new HttpEntity<>(headers), String.class);
-    return resp.getBody();
+    String url = "https://maps.apigw.ntruss.com" + apiPath;
+
+    try {
+      ResponseEntity<String> resp = rest.exchange(
+          url,
+          HttpMethod.GET,
+          new HttpEntity<>(headers),
+          String.class
+      );
+      log.info("응답: {}", resp);
+      log.info("응답 상태 코드: {}", resp.getStatusCode());
+      log.info("응답 본문: {}", resp.getBody());
+
+      return resp.getBody();
+    } catch (Exception e) {
+      log.error("RestTemplate 요청 실패", e);
+      return "요청 실패: " + e.getMessage();
+    }
   }
 
   private String makeSignature(String method, String uri, String timestamp) {
     String message = new StringBuilder()
         .append(method).append(" ").append(uri).append("\n")
         .append(timestamp).append("\n")
-        .append(props.getRest().getAccessKey())
+        .append(props.getGateway().getAccessKey())
         .toString();
 
     try {
       Mac mac = Mac.getInstance("HmacSHA256");
       mac.init(new SecretKeySpec(
-          props.getRest().getSecretKey().getBytes(StandardCharsets.UTF_8),
+          props.getGateway().getSecretKey().getBytes(StandardCharsets.UTF_8),
           "HmacSHA256"
       ));
       byte[] hmacBytes = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));

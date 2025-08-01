@@ -37,10 +37,16 @@ upload:
   path: C:\KDT\projects\uploads\bbs
   url-prefix: /static/uploads
 
+
+
+
 naver:
-  map:
-    client-id:    ${NAVER_MAPS_CLIENT_ID}
-    rest:
-      access-key: ${NAVER_MAPS_CLIENT_ID}
-      secret-key: ${NAVER_MAPS_CLIENT_SECRET}
-      base-url:   https://naveropenapi.apigw.ntruss.com
+  gateway:       # 지도·지오코딩  ➜ API Gateway(Hmac 서명)
+    base-url: https://maps.apigw.ntruss.com
+    clientId: ${NAVER_MAPS_CLIENT_ID}
+    access-key: ${NAVER_MAPS_CLIENT_ID}
+    secret-key: ${NAVER_MAPS_CLIENT_SECRET}
+  open:          # 지역·검색  ➜ OpenAPI(Client ID/Secret)
+    base-url: https://openapi.naver.com
+    client-id: ${NAVER_OPEN_CLIENT_ID}
+    client-secret: ${NAVER_OPEN_CLIENT_SECRET}

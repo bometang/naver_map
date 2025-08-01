@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0,
+                 maximum-scale=1.0, minimum-scale=1.0,
+                 user-scalable=no" />
+  <title>지도 검색 및 표시</title>
+  <script
+          th:src="'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=' + ${naverMapProps.gateway.clientId}"
+          type="text/javascript">
+  </script>
+  <style>
+    #bounds-info {
+      margin-top: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      background: rgba(255,255,255,0.8);
+      padding: 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<div>
+  <input type="text"
+         id="address-input"
+         placeholder="주소를 입력하세요"
+         style="width:70%; padding:8px;" />
+  <button id="search-btn"
+          style="padding:8px 12px;">검색</button>
+</div>
+<div id="map"
+     style="width:100%; height:400px; margin-top:10px;"></div>
+<section class="search-section">
+  <input type="text" id="keyword-input" placeholder="키워드(건물·상호) 입력" />
+  <button id="keyword-btn">목록 검색</button>
+</section>
+<div id="results-wrapper">
+  <ul id="result-list"></ul>
+</div>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // 1) 지도 초기화
+  var map = new naver.maps.Map('map', {
+    center: new naver.maps.LatLng(37.5665, 126.9780),
+    zoom: 13
+  });
+  var marker = new naver.maps.Marker({ map: map });
+
+  // 2) 검색 함수
+  function performSearch() {
+    var input = document.getElementById('address-input');
+    var query = input.value.trim();
+    if (!query) {
+      alert('주소를 입력해주세요.');
+      input.focus();
+      return;
+    }
+    fetch('/map/geocode?query=' + encodeURIComponent(query))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data.addresses || data.addresses.length === 0) {
+          alert('검색 결과가 없습니다.');
+          return;
+        }
+        var item = data.addresses[0];
+        var pos  = new naver.maps.LatLng(
+          parseFloat(item.y),
+          parseFloat(item.x)
+        );
+        map.setCenter(pos);
+        map.setZoom(16);
+        marker.setPosition(pos);
+      })
+      .catch(function(err) {
+        console.error(err);
+        alert('검색 중 오류가 발생했습니다.');
+      });
+  }
+
+  // 3) 이벤트 바인딩
+  document.getElementById('search-btn')
+          .addEventListener('click', performSearch);
+  document.getElementById('address-input')
+          .addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      performSearch();
+      e.preventDefault();
+    }
+  });
+
+  /* === “키워드 → 반환 JSON만 화면에 표시” 전용 함수 ======================== */
+
+async function fetchAndShowRaw() {
+  const kw = document.getElementById('keyword-input').value.trim();
+  if (!kw) { alert('키워드를 입력하세요'); return; }
+
+  try {
+
+    const res = await ajax.get('/map/dev', { query: kw });
+
+    const box = document.getElementById('result-list');
+    box.innerHTML = '';
+    const pre = document.createElement('pre');
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.textContent = JSON.stringify(res, null, 2);
+    box.appendChild(pre);
+
+  } catch (err) {
+    console.error(err);
+    alert('요청 실패');
+  }
+}
+
+/* ── 이벤트 바인딩 ──────────────────────────────────────────────────────── */
+document.getElementById('keyword-btn').addEventListener('click', fetchAndShowRaw);
+document.getElementById('keyword-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { fetchAndShowRaw(); e.preventDefault(); }
+});
+
+
+  /*]]>*/
+</script>
+</body>
+</html>
