@@ -5,26 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fc470a1-286f-4360-ab34-5292c3cb0de6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/AddressInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/static/js/naverMap/page.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page_bak.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/kakaoMap/KakaoLocalSearchRes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/map/kakaoMap/kakaoMapSVC.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/map/kakaoMap/kakaoMapSVCImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/config/KakaoProps.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/config/naverMap$Rest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/config/naverMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/map/naverMap/AddressInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/map/naverMap/AddressInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes$Item.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes$Item.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/map/naverMap/MapController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/map/naverMap/MapController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/naverMap/page.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/naverMap/page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/config/naverMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/config/NaverProps.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/static/js/naverMap/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/static/js/naverMap/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/AddressInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/AddressInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/map/naverMap/LocalSearchRes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/map/naverMap/svc/naverMapSVC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/naverMap/svc/naverMapSVCImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/map/naverMap/svc/naverMapSVCImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/map/naverMap/MapController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/map/naverMap/MapController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/naverMap/page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/naverMap/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/naverMap/page.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,8 +47,8 @@
       <list>
         <option value="package-info" />
         <option value="HTML File" />
-        <option value="Interface" />
         <option value="Thymeleaf" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -95,11 +95,11 @@
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\static\img\bbs\bbs_detail" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.KDT.mosi.domain.entity.map.kakaoMap" />
       <recent name="com.KDT.mosi.web.exception" />
       <recent name="com.KDT.mosi.web.controller" />
       <recent name="com.KDT.mosi.web.config" />
       <recent name="com.KDT.mosi.web.controller.board" />
-      <recent name="com.KDT.mosi.domain.board.bbsUpload.dao" />
     </key>
   </component>
   <component name="RunManager" selected="Application.MosiApplication">

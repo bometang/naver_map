@@ -1,7 +1,8 @@
 package com.KDT.mosi.web.controller.map.naverMap;
 
 import com.KDT.mosi.domain.entity.map.naverMap.AddressInfo;
-import com.KDT.mosi.domain.naverMap.svc.naverMapSVC;
+import com.KDT.mosi.domain.map.kakaoMap.kakaoMapSVC;
+import com.KDT.mosi.domain.map.naverMap.svc.naverMapSVC;
 import com.KDT.mosi.web.api.ApiResponse;
 import com.KDT.mosi.web.api.ApiResponseCode;
 import com.KDT.mosi.web.config.NaverProps;
@@ -24,16 +25,25 @@ import java.util.List;
 public class MapController {
   private final naverMapSVC naverMapSVC;
   private final NaverProps props;
+  private final kakaoMapSVC kakaoMapSVC;
 
   @GetMapping("/dev")
   public ResponseEntity<ApiResponse<List<AddressInfo>>> searchByKeyword(
-      @RequestParam("query") String query
+      @RequestParam("query") String query,
+      @RequestParam(value="start", required=false) String start
   ) {
-    log.info("controller received query=[{}]", query);
-    List<AddressInfo> addressList = naverMapSVC.fetchAddresses(query);
-    log.info("controller returning AddressInfo count=[{}]", addressList.size());
-    return ResponseEntity
-        .ok(ApiResponse.of(ApiResponseCode.SUCCESS, addressList));
+    // 기본 중심 좌표
+    double lat = 37.5665, lng = 126.9780;
+
+    // start 파싱
+    if (start != null && start.contains(",")) {
+      String[] p = start.split(",");
+      lat = Double.parseDouble(p[0]);
+      lng = Double.parseDouble(p[1]);
+    }
+
+    List<AddressInfo> list = kakaoMapSVC.fetchAddresses(query, lat, lng);
+    return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, list));
   }
 
 

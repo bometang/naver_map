@@ -1,4 +1,4 @@
-package com.KDT.mosi.domain.naverMap.svc;
+package com.KDT.mosi.domain.map.naverMap.svc;
 
 import com.KDT.mosi.domain.entity.map.naverMap.AddressInfo;
 import com.KDT.mosi.domain.entity.map.naverMap.LocalSearchRes;
@@ -34,30 +34,27 @@ public class naverMapSVCImpl implements naverMapSVC{
 
   // 사용자 입력 주소값을 네이버 검색api를 통해  위도,경도로 변경
   /* ------------------------------------------------------------------
-   *  키워드 → 지번주소 10건 반환 (네이버 지역검색 OpenAPI)
+   *  키워드 → 지번주소 5건 반환 (네이버 지역검색 OpenAPI)
    * ------------------------------------------------------------------ */
   @Override
-  public List<AddressInfo> fetchAddresses(String keyword) {
-    log.info("fetchAddresses 호출 - keyword=[{}]", keyword);
+  public List<AddressInfo> fetchAddresses(String keyword, double lat, double lng) {
+    log.info("fetchAddresses 호출 - keyword=[{}], center=[{},{}]",
+        keyword, lat, lng);
 
     // 1) 키워드 URL-인코딩
-    String encoded;
-    try {
-      encoded = URLEncoder.encode(keyword, StandardCharsets.UTF_8.name());
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException("키워드 인코딩 실패", e);
-    }
-    log.info("인코딩된 keyword=[{}]", encoded);
+    String encoded = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 
-    // 2) 요청 URL
+    // 2) 요청 URL: x=경도, y=위도 순서로 넣습니다.
     String apiURL = props.getOpen().getBaseUrl()
-        + "/v1/search/local.json?query=" + encoded
-        + "&display=10";
+        + "/v1/search/local.json"
+        + "?query="   + encoded
+        + "&display=5"
+        + "&x="       + lng
+        + "&y="       + lat;
     log.info("▶ Request URL: {}", apiURL);
 
     HttpURLConnection con = null;
     try {
-      // 3) HttpURLConnection 설정
       URL url = new URL(apiURL);
       con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod("GET");
@@ -65,31 +62,24 @@ public class naverMapSVCImpl implements naverMapSVC{
       con.setRequestProperty("X-Naver-Client-Secret", props.getOpen().getClientSecret());
       con.setRequestProperty("Accept", "application/json");
 
-      log.info("▶ Request Method: {}", con.getRequestMethod());
-      log.info("▶ Request Headers: {}", con.getRequestProperties());
-
-      // 4) 응답 수신
       int code = con.getResponseCode();
-      log.info("▶ Response Code: {}", code);
       InputStream stream = (code == HttpURLConnection.HTTP_OK)
           ? con.getInputStream()
           : con.getErrorStream();
-
       String responseBody = readBody(stream);
-      log.info("▶ Response Body: {}", responseBody);
 
       // 5) JSON → DTO 매핑
       ObjectMapper mapper = new ObjectMapper();
       LocalSearchRes res = mapper.readValue(responseBody, LocalSearchRes.class);
-      log.info("▶ 응답 items 수=[{}]", res.getItems().size());
 
       // 6) DTO → AddressInfo 변환
       List<AddressInfo> result = res.getItems().stream()
-          .map(item -> {
-            log.info("   item.address=[{}], item.roadAddress=[{}]",
-                item.getAddress(), item.getRoadAddress());
-            return new AddressInfo(item.getAddress(), item.getRoadAddress());
-          })
+          .map(item -> new AddressInfo(
+              item.getAddress(),
+              item.getRoadAddress(),
+              item.getMapx(),
+              item.getMapy()
+          ))
           .collect(Collectors.toList());
 
       log.info("▶ 최종 반환 AddressInfo 개수=[{}]", result.size());
@@ -99,9 +89,7 @@ public class naverMapSVCImpl implements naverMapSVC{
       log.error("HTTP 요청 실패", e);
       return Collections.emptyList();
     } finally {
-      if (con != null) {
-        con.disconnect();
-      }
+      if (con != null) con.disconnect();
     }
   }
 

@@ -10,5 +10,7 @@ import lombok.Setter;
 public class AddressInfo {
   private String jibunAddress;   // 지번
   private String roadAddress;    // 도로명
+  private String mapx;    // 경도 (String)
+  private String mapy;
 }
 

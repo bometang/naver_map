@@ -50,3 +50,10 @@ naver:
     base-url: https://openapi.naver.com
     client-id: ${NAVER_OPEN_CLIENT_ID}
     client-secret: ${NAVER_OPEN_CLIENT_SECRET}
+
+
+
+kakao:
+  map:
+    base-url: https://dapi.kakao.com
+    rest-key: ${KAKAO_REST_API_KEY}
