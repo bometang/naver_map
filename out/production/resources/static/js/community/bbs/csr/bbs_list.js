@@ -103,6 +103,7 @@ const rows = bbs.map(b => {
       <td class="title-cell">
         ${indentHtml}<span>${b.title}</span>
        ${b.commentCnt > 0 ? `<span class="commentCnt">[${b.commentCnt}]</span>` : ''}
+       <span class="icon-clip"></span>
       </td>
       <td>${b.nickname}</td>
       <td>${formatRelativeTime(b.createDate)}</td>
@@ -128,17 +129,40 @@ $list.innerHTML = rows;
 
     await Promise.all(bbs.map(async b => {
       try {
-        // 204 No Content 인 경우 빈 결과
         const res = await ajax.get(`/api/bbs/upload/${b.bbsId}/thumbnail`);
-        if (res && res.header?.rtcd === 'S00' || typeof res.url === 'string') {
-          const url = res.url ?? res.body?.url;  // ApiResponse 감싸여 있으면 res.body.url
-          const td = document.querySelector(`tr[data-pid="${b.bbsId}"] .thumb-cell`);
-          if (td && url) {
-            td.innerHTML = `<img src="${url}" alt="썸네일">`;
+        const ok = !!res && (res.header?.rtcd === 'S00' || typeof res.url === 'string');
+
+        const tr        = $list.querySelector(`tr[data-pid="${b.bbsId}"]`);
+        if (!tr) return;
+
+        // 1) 클립 아이콘: 첨부가 있으면 표시 (첨부개수 있으면 그걸 최우선, 없으면 썸네일 성공으로 대체)
+        if (tr.dataset.status !== 'B0202') {
+          const titleCell = tr.querySelector('.title-cell');
+          if (titleCell) {
+            const hasAttach = Number(b.attachCnt ?? b.attachCount ?? b.fileCnt ?? 0) > 0 || ok;
+            if (hasAttach) {
+              let clipWrap = titleCell.querySelector('.icon-clip');
+              if (!clipWrap) {
+                clipWrap = document.createElement('span');
+                clipWrap.className = 'icon-clip';
+                titleCell.append(clipWrap); // 제목/댓글수 맨 뒤
+              }
+              if (!clipWrap.firstChild) {
+                clipWrap.innerHTML = `<img src="/img/bbs/bbs_list/left_clip.png" alt="첨부파일">`;
+              }
+            }
+          }
+        }
+
+        // 2) 썸네일 표시
+        if (ok) {
+          const url = res.url ?? res.body?.url;
+          const thumbCell = tr.querySelector('.thumb-cell');
+          if (thumbCell && url) {
+            thumbCell.innerHTML = `<img src="${url}" alt="썸네일">`;
           }
         }
       } catch (e) {
-        // 썸네일이 없거나 에러면 그냥 비워두기
         console.info(`썸네일 없음: bbsId=${b.bbsId}`);
       }
     }));

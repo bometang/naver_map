@@ -154,7 +154,7 @@ public class ApiBbsUploadController {
    */
   @GetMapping("/{bbsId}/thumbnail")
   public ResponseEntity<ApiResponse<UploadResult>> getThumbnail(@PathVariable("bbsId") Long bbsId) {
-    return bbsUploadSVC.findThumbnail(bbsId, "ATTACHMENT")
+    return bbsUploadSVC.findThumbnail(bbsId, "INLINE")
         .map(th -> ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, th)))
         .orElseGet(() -> ResponseEntity.ok(ApiResponse.of(ApiResponseCode.NO_DATA, null)));
   }

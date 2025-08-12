@@ -635,6 +635,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const canEdit  =  postComment.memberId === loginId;
             const canHr = postComment.step === 0 && idx >0;
             const canDel = postComment.memberId === loginId;
+            const canReport = postComment.memberId === loginId;
             const reported = !!postComment.reported;
             const canStatus = postComment.status === 'R0201';
             const relTime = formatRelativeTime(postComment.updateDate);
@@ -714,7 +715,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   >
                     삭제
                   </button>
-                  <button type="button" class="btnReportComment" data-rbbs-id="${postComment.rbbsId}" ${postComment.reported ? 'disabled' : ''}>신고</button>
+                  <button type="button" class="btnReportComment${canDel ? ' hidden' : ''}" data-rbbs-id="${postComment.rbbsId}" ${postComment.reported ? 'disabled' : ''}>신고</button>
                 </div>
               </div>
               <div id="replyComment-${postComment.rbbsId}" class="replyComment" style="padding-left: ${doubleIndentPx}px;"></div>
@@ -839,6 +840,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (loginId == null) { alert('로그인이 필요합니다.'); return; }
 
             const reasonRaw = prompt('신고 사유를 입력하세요:');
+            if (!reasonRaw) return;
             const reason = reasonRaw?.trim();
             if (!reason) { alert('신고 사유가 필요합니다.'); return; }
 
