@@ -117,8 +117,13 @@ public class BbsSVCImpl implements BbsSVC{
   }
 
   @Override
-  public Optional<Bbs> findTemporaryStorageById(Long member_id, Long pbbs_id) {
-    return bbsDAO.findTemporaryStorageById(member_id, pbbs_id);
+  public List<Bbs> findTemporaryStorageById(Long member_id) {
+    return bbsDAO.findTemporaryStorageById(member_id);
+  }
+
+  @Override
+  public int tempCount(Long memberId) {
+    return bbsDAO.tempCount(memberId);
   }
 
   @Override

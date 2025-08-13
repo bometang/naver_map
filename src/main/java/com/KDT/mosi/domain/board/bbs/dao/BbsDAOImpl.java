@@ -50,9 +50,7 @@ public class BbsDAOImpl implements BbsDAO {
       bbs.setBgroup(parent.getBgroup());
       bbs.setBindent(parent.getBindent() + 1);
     }
-    // else { /* 아무것도 안 해도 됩니다 */ }
 
-    // — SQL 조립 (원래 쓰시던 구조 그대로) —
     StringBuffer sql = new StringBuffer();
     if ("B0201".equals(statusBbs)) {
       if (!parentsBbs) {
@@ -484,47 +482,44 @@ public class BbsDAOImpl implements BbsDAO {
   }
 
   @Override
-  public Optional<Bbs> findTemporaryStorageById(Long memberId, Long pbbsId) {
+  public List<Bbs> findTemporaryStorageById(Long memberId) {
     //sql
     StringBuffer sql = new StringBuffer();
     sql.append("SELECT ");
-    sql.append("b.bbs_id as bbs_id, ");
-    sql.append("b.bcategory as bcategory, ");
-    sql.append("b.status as status, ");
-    sql.append("b.title as title, ");
-    sql.append("NVL(m.member_id, 0) AS member_id, ");
-    sql.append("m.nickname as nickname, ");
-    sql.append("b.hit AS hit, ");
-    sql.append("b.bcontent as bcontent, ");
-    sql.append("b.pbbs_id AS pbbs_id, ");
-    sql.append("b.bgroup AS bgroup, ");
-    sql.append("b.step AS step, ");
-    sql.append("b.bindent AS bindent, ");
-    sql.append("b.create_date AS create_date, ");
-    sql.append("b.update_date as update_date ");
-    sql.append("FROM bbs b ");
-    sql.append("LEFT JOIN member m ");
-    sql.append("ON b.member_id = m.member_id ");
-    sql.append("where b.member_id = :memberId ");
-    sql.append("and b.status = 'B0203' ");
-    sql.append("and NVL(b.pbbs_id, 0) = NVL(:pbbsId, 0) ");
-    sql.append("ORDER BY b.update_date DESC ");
-    sql.append("FETCH FIRST 1 ROWS ONLY ");
-
-    Long safePbbsId = (pbbsId != null) ? pbbsId : 0L;
+    sql.append("bbs_id, ");
+    sql.append("bcategory, ");
+    sql.append("title, ");
+    sql.append("pbbs_id, ");
+    sql.append("bgroup, ");
+    sql.append("step, ");
+    sql.append("create_date ");
+    sql.append("FROM bbs ");
+    sql.append("where member_id = :memberId ");
+    sql.append("and status = 'B0203' ");
+    sql.append("ORDER BY create_date DESC ");
 
     SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("memberId",memberId)
-        .addValue("pbbsId",   safePbbsId);
+        .addValue("memberId",memberId);
 
-    Bbs bbs = null;
-    try {
-      bbs = template.queryForObject(sql.toString(), param, BeanPropertyRowMapper.newInstance(Bbs.class));
-    } catch (EmptyResultDataAccessException e) { //template.queryForObject() : 레코드를 못찾으면 예외 발생
-      return Optional.empty();
-    }
+    List<Bbs> list = template.query(sql.toString(), param, BeanPropertyRowMapper.newInstance(Bbs.class));
 
-    return Optional.of(bbs);
+    return list;
+  }
+
+  @Override
+  public int tempCount(Long memberId) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("SELECT count(bbs_id) ");
+    sql.append("FROM bbs ");
+    sql.append("WHERE member_id = :memberId ");
+    sql.append("AND STATUS = 'B0203' ");
+
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("memberId",memberId);
+
+    int i = template.queryForObject(sql.toString(), param, Integer.class);
+
+    return i;
   }
 
   @Override

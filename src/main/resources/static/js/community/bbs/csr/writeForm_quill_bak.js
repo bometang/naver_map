@@ -13,11 +13,6 @@ const uploadGroupInput = document.getElementById('upload-group');   // <input ty
 const attachmentList   = document.getElementById('file-list');      // <ul id="file-list"></ul>
 const attachments      = [];   // 서버에서 돌려준 메타데이터를 저장
 
-
-// ---------------- 임시저장 관련 요소 ------------------------------------
-const tempSave =document.querySelector('.tempSave');
-const tempCount = tempSave.querySelector('.tempCount');
-
 // ---------------- Quill 에디터 초기화 ------------------------------------
 const quill = new Quill('#editor', {
   theme: 'snow',
@@ -105,11 +100,49 @@ async function loadAttachmentsByBbsId(bbsId) {
 
 // ---------------- 임시저장 확인 -----------------------------------------
 try {
-  const checkUrl = '/api/bbs/temp/count'
+  const checkUrl = '/api/bbs/temp/check'
   const checkRes = await ajax.get(checkUrl);
-  if (checkRes.header.rtcd === 'S00'){
-    const count = Number(checkRes.body) || 0;
-    tempCount.textContent = `(${count})`;
+
+  if (checkRes.header.rtcd === 'S00' && checkRes.body) {
+    console.log('임시저장 불러오는중');
+    const message = parentId
+      ? '이전 답글 초안을 불러오시겠습니까?'
+      : '이전 임시저장을 불러오시겠습니까?';
+
+    if (confirm(message)) {
+      // 2) 본문·제목 등 초안 데이터
+      const loadUrl = parentId
+        ? `/api/bbs/temp/load?pbbsId=${parentId}`
+        : '/api/bbs/temp/load';
+      const loadRes = await ajax.get(loadUrl);
+
+      if (parentId) {
+        await loadAttachmentsByBbsId(parentId);
+      }
+      if (loadRes.header.rtcd === 'S00') {
+        const draft   = loadRes.body;
+        const bbsId   = draft.bbsId;
+        frm.querySelector('[name="title"]').value = loadRes.body.title;
+        quill.root.innerHTML = loadRes.body.bcontent || '';
+        categorySelect.value = loadRes.body.bcategory || '';
+        if (!parentId && bbsId) {
+          console.log("첨부파일 불러오기")
+          await loadAttachmentsByBbsId(bbsId);
+        }
+      }
+      console.log("삭제시작")
+      const deleteUrl = parentId
+        ? `/api/bbs/temp?pbbsId=${parentId}`
+        : '/api/bbs/temp';
+      await ajax.delete(deleteUrl);
+
+
+    } else {
+      const deleteUrl = parentId
+        ? `/api/bbs/temp?pbbsId=${parentId}`
+        : '/api/bbs/temp';
+      await ajax.delete(deleteUrl);
+    }
   }
 } catch (e) {
   console.error('임시저장 확인 실패', e);

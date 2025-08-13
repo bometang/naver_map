@@ -48,9 +48,6 @@ public class ApiBbsController {
     Long id = bbsSVC.save(bbs);
     if (saveApi.getUploadGroup() != null) {
       bbsUploadSVC.bindGroupToBbs(id,saveApi.getUploadGroup());
-      log.info("saveApi.getUploadGroup = {}", saveApi.getUploadGroup());
-    }else{
-      log.info("NOONONONONOsaveApi.getUploadGroup = {}", saveApi.getUploadGroup());
     }
     Optional<Bbs> optionalBbs = bbsSVC.findById(id);
     Bbs findedBbs = optionalBbs.orElseThrow();
@@ -61,52 +58,29 @@ public class ApiBbsController {
   }
 
   /**
-   * 1) 임시저장 존재 여부 확인
-   *    GET /api/bbs/temp/check?pbbsId={pbbsId}
+   * 임시저장 목록 가져오기
+   *    GET /api/bbs/temp/check
    */
   @GetMapping("/temp/check")
-  public ResponseEntity<ApiResponse<Boolean>> hasTemp(
-      @RequestParam(name = "pbbsId", required = false) Long pbbsId,
+  public ResponseEntity<ApiResponse<List<Bbs>>> hasTemp(
       HttpSession session
   ) {
     Long memberId = (Long) session.getAttribute("loginMemberId");
-    boolean exists = bbsSVC.findTemporaryStorageById(memberId, pbbsId).isPresent();
-    return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, exists));
+    List<Bbs> list= bbsSVC.findTemporaryStorageById(memberId);
+    return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, list));
   }
 
   /**
-   * 2) 임시저장 로드
-   *    GET /api/bbs/temp/load?pbbsId={pbbsId}
+   * 임시저장 목록 갯수 가져오기
+   *    GET /api/bbs/temp/check
    */
-  @GetMapping("/temp/load")
-  public ResponseEntity<ApiResponse<Bbs>> loadTemp(
-      @RequestParam(name = "pbbsId", required = false) Long pbbsId,
+  @GetMapping("/temp/count")
+  public ResponseEntity<ApiResponse<Long>> tempCount(
       HttpSession session
   ) {
     Long memberId = (Long) session.getAttribute("loginMemberId");
-    Optional<Bbs> tempOpt = bbsSVC.findTemporaryStorageById(memberId, pbbsId);
-    Bbs temp = tempOpt.get();
-
-    // 2) 불러온 뒤 곧바로 삭제
-//    bbsSVC.deleteTemporaryStorage(memberId, pbbsId);
-
-    // 3) 로드된 내용 반환
-    return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, temp));
-  }
-
-  /**
-   * 3) 임시저장 삭제
-   *    DELETE /api/bbs/temp?pbbsId={pbbsId}
-   */
-  @DeleteMapping("/temp")
-  public ResponseEntity<ApiResponse<Void>> deleteTemp(
-      @RequestParam(name = "pbbsId", required = false) Long pbbsId,
-      HttpSession session
-  ) {
-    Long memberId = (Long) session.getAttribute("loginMemberId");
-    bbsSVC.deleteTemporaryStorage(memberId, pbbsId);
-    log.info("삭제 완료");
-    return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, null));
+    long i = bbsSVC.tempCount(memberId);
+    return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, i));
   }
 
 

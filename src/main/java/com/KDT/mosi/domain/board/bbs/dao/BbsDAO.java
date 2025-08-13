@@ -49,7 +49,10 @@ public interface BbsDAO {
   public boolean existsDuplicateRecent(String title, String bcontent, int CHECK_CHAR_LEN);
 
   //게시글 임시저장 확인
-  Optional<Bbs> findTemporaryStorageById(Long member_id, Long pbbs_id);
+  List<Bbs> findTemporaryStorageById(Long member_id);
+
+  //게시글 임시저장 갯수 확인
+  int tempCount(Long memberId);
 
   //게시글 임시저장 삭제
   int deleteTemporaryStorage(Long memberId, Long pbbsId);
