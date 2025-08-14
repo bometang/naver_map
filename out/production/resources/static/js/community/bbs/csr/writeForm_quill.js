@@ -18,6 +18,24 @@ const attachments      = [];   // 서버에서 돌려준 메타데이터를 저�
 const tempSave =document.querySelector('.tempSave');
 const tempCount = tempSave.querySelector('.tempCount');
 
+
+
+
+
+
+
+
+
+
+
+
+const btn   = document.getElementById('temp-btn');
+const panel = document.getElementById('temp-panel');
+
+btn.addEventListener('click', () => {
+  panel.classList.toggle('hidden');           // 보이기/숨기기
+  btn.setAttribute('aria-expanded', String(!panel.classList.contains('hidden'))); // 선택
+});
 // ---------------- Quill 에디터 초기화 ------------------------------------
 const quill = new Quill('#editor', {
   theme: 'snow',
