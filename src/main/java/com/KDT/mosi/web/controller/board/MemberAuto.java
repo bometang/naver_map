@@ -1,5 +1,6 @@
 package com.KDT.mosi.web.controller.board;
 
+import com.KDT.mosi.domain.dev.DevDao;
 import com.KDT.mosi.domain.entity.Member;
 import com.KDT.mosi.domain.entity.Role;
 import com.KDT.mosi.domain.member.dao.MemberDAO;
@@ -32,6 +33,7 @@ public class MemberAuto {
   private final MemberDAO memberDAO;
   private final MemberSVC memberSVC;
   private final MemberRoleDAO memberRoleDAO;
+  private final DevDao devDAO;
 
 //  @GetMapping("/test-login")
 //  public String testLogin(
@@ -120,4 +122,39 @@ public class MemberAuto {
     // (원하시면 세션에 새로 갱신된 Member 객체를 담아주실 수도 있습니다)
     return "redirect:/";
   }
+
+  @GetMapping("/pro")
+  public String seedProduct1() {
+    String base = new File("C:/KDT/img/product").isDirectory()
+        ? "C:/KDT/img/product" : "D:/study/img/product";
+
+    devDAO.insertProductWithImagesFixedId(
+        1L,                 // PRODUCT_ID 고정 = 1
+        6L,                 // MEMBER_ID
+        "area",             // CATEGORY
+        "바다로 가자",        // TITLE
+        "Y",                // GUIDE_YN
+        100000L,            // NORMAL_PRICE
+        1500000L,           // GUIDE_PRICE
+        80000L,             // SALES_PRICE
+        1100000L,           // SALES_GUIDE_PRICE
+        3,                  // TOTAL_DAY
+        10,                 // TOTAL_TIME
+        70000L,             // REQ_MONEY
+        "Y",                // SLEEP_INFO
+        "전철",              // TRANSPORT_INFO
+        "Y",                // FOOD_INFO
+        "10",               // REQ_PEOPLE
+        "수영 가능",          // TARGET
+        "갈아입을 옷",        // STUCKS
+        "바다로",             // DESCRIPTION
+        "가십다",             // DETAIL
+        base,               // PRODUCT.FILE_* 경로
+        "제7회 K-디지털 트레이닝 해커톤_훈련증빙자료 안내.pdf",
+        base,               // 이미지 경로
+        List.of("바다1.jpg","바다2.jpg","바다3.jpg","바다4.jpg")
+    );
+    return "redirect:/";
+  }
+
 }

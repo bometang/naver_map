@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,6 +23,15 @@ import java.util.Optional;
 public class MemberDAOImpl implements MemberDAO {
 
   private final NamedParameterJdbcTemplate template;
+
+  private final DataSource dataSource;
+  private static long counter = 1;  // 시작값 (한 자리면 1~9까지만)
+
+  private static final String SQL_INSERT = """
+    INSERT INTO PRODUCT_IMAGE
+      (IMAGE_ID, PRODUCT_ID, IMAGE_DATA, IMAGE_ORDER, FILE_NAME, FILE_SIZE, MIME_TYPE)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  """;
 
   /**
    * 회원 저장
@@ -231,4 +241,5 @@ public class MemberDAOImpl implements MemberDAO {
 
     return template.update(sql, params);
   }
+
 }
