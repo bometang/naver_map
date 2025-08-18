@@ -1,0 +1,440 @@
+-- 기존 테이블 및 시퀀스 삭제 (있으면)
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE member_terms CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE terms CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE member_role CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE role CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE member CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP SEQUENCE member_member_id_seq';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP SEQUENCE terms_seq';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+
+
+-- 역할 테이블
+CREATE TABLE role (
+  role_id    VARCHAR2(11) PRIMARY KEY,
+  role_name  VARCHAR2(50) NOT NULL
+);
+
+-- 회원 테이블 (생년월일 추가됨)
+CREATE TABLE member (
+  member_id       NUMBER(10),
+  email           VARCHAR2(40) NOT NULL,
+  name            VARCHAR2(50) NOT NULL,
+  passwd          VARCHAR2(100) NOT NULL,
+  tel             VARCHAR2(13),
+  nickname        VARCHAR2(30),
+  gender          VARCHAR2(6),
+  address         VARCHAR2(200),
+  birth_date      DATE,  -- ✅ 생년월일
+  pic             BLOB,
+  create_date     TIMESTAMP DEFAULT SYSTIMESTAMP,
+  update_date     TIMESTAMP DEFAULT SYSTIMESTAMP
+);
+
+-- 제약조건 추가
+ALTER TABLE member ADD CONSTRAINT member_member_id_pk PRIMARY KEY (member_id);
+ALTER TABLE member ADD CONSTRAINT member_email_uk UNIQUE(email);
+ALTER TABLE member ADD CONSTRAINT member_gender_ck CHECK (gender IN ('남자','여자'));
+ALTER TABLE member ADD CONSTRAINT member_nickname_uk UNIQUE(nickname);
+
+-- 시퀀스 생성
+CREATE SEQUENCE member_member_id_seq;
+
+-- 샘플 데이터 삽입
+INSERT INTO role (role_id, role_name) VALUES ('R01', '구매자');
+INSERT INTO role (role_id, role_name) VALUES ('R02', '판매자');
+
+-- 회원 샘플 데이터 (생년월일 추가)
+INSERT INTO member (member_id, email, name, passwd, tel, nickname, gender, address, birth_date)
+VALUES (member_member_id_seq.NEXTVAL, 'shinnosuke@naver.com', '신짱구', '1234', '010-1111-1111', '짱구', '남자', '떡잎마을', TO_DATE('2010-03-01','YYYY-MM-DD'));
+
+INSERT INTO member (member_id, email, name, passwd, tel, nickname, gender, address, birth_date)
+VALUES (member_member_id_seq.NEXTVAL, 'hiroshi@naver.com', '신형만', '5678', '010-2222-2222', '형만이', '남자', '떡잎마을', TO_DATE('1980-11-03','YYYY-MM-DD'));
+
+INSERT INTO member (member_id, email, name, passwd, tel, nickname, gender, address, birth_date)
+VALUES (member_member_id_seq.NEXTVAL, 'misae@naver.com', '봉미선', 'abcd', '010-3333-3333', '미선이', '여자', '떡잎마을', TO_DATE('1982-06-15','YYYY-MM-DD'));
+
+INSERT INTO member (member_id, email, name, passwd, tel, nickname, gender, address, birth_date)
+VALUES (member_member_id_seq.NEXTVAL, 'nene@naver.com', '짱아', 'efgh', '010-4444-4444', '짱아', '여자', '떡잎마을', TO_DATE('2015-09-09','YYYY-MM-DD'));
+
+INSERT INTO member (member_id, email, name, passwd, tel, nickname, gender, address, birth_date)
+VALUES (member_member_id_seq.NEXTVAL, 'bo@naver.com', '맹구', 'ijkl', '010-5555-5555', '맹구', '남자', '떡잎마을', TO_DATE('2010-07-24','YYYY-MM-DD'));
+
+-- 역할 매핑
+CREATE TABLE member_role (
+  member_id  NUMBER(10),
+  role_id    VARCHAR2(11),
+  PRIMARY KEY (member_id, role_id),
+  FOREIGN KEY (member_id) REFERENCES member(member_id),
+  FOREIGN KEY (role_id) REFERENCES role(role_id)
+);
+
+-- 초기 역할 지정
+INSERT INTO member_role VALUES (1, 'R01'); -- 짱구 : 구매자
+INSERT INTO member_role VALUES (2, 'R02'); -- 형만 : 판매자
+INSERT INTO member_role VALUES (3, 'R01'); -- 봉미선 : 구매자
+INSERT INTO member_role VALUES (4, 'R01'); -- 짱아 : 구매자
+INSERT INTO member_role VALUES (5, 'R02'); -- 맹구 : 판매자
+
+-- 역할 전환/제거 예시
+INSERT INTO member_role VALUES (1, 'R02');
+DELETE FROM member_role WHERE member_id = 1 AND role_id = 'R01';
+
+-- 커밋
+COMMIT;
+
+-- 약관 테이블 및 트리거
+CREATE SEQUENCE terms_seq;
+
+CREATE TABLE terms (
+  terms_id     NUMBER(10) PRIMARY KEY,
+  name         VARCHAR2(50) NOT NULL,
+  content      CLOB NOT NULL,
+  is_required  CHAR(1) DEFAULT 'Y' CHECK (is_required IN ('Y','N')),
+  version      VARCHAR2(20) NOT NULL,
+  created_at   TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
+);
+
+CREATE OR REPLACE TRIGGER trg_terms_before_insert
+BEFORE INSERT ON terms
+FOR EACH ROW
+BEGIN
+  IF :NEW.terms_id IS NULL THEN
+    SELECT terms_seq.NEXTVAL INTO :NEW.terms_id FROM dual;
+  END IF;
+END;
+
+
+-- 회원 약관 동의 테이블
+CREATE TABLE member_terms (
+  member_id  NUMBER(10) NOT NULL,
+  terms_id   NUMBER(10) NOT NULL,
+  agreed_at  TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  PRIMARY KEY (member_id, terms_id),
+  FOREIGN KEY (member_id) REFERENCES member(member_id),
+  FOREIGN KEY (terms_id) REFERENCES terms(terms_id)
+);
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+-- 기존 테이블 삭제 (예외 무시)
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE buyer_page CASCADE CONSTRAINTS';
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END;
+
+
+-- 기존 시퀀스 삭제
+DROP SEQUENCE buyer_page_seq;
+
+-- 테이블 재생성
+CREATE TABLE BUYER_PAGE (
+    PAGE_ID          NUMBER(10)       PRIMARY KEY,                           -- 마이페이지 ID
+    MEMBER_ID        NUMBER(10)       NOT NULL,                              -- 회원 ID (외래키)
+    IMAGE            BLOB,                                                  -- 프로필 이미지
+    INTRO            VARCHAR2(500),                                         -- 자기소개글
+    RECENT_ORDER     VARCHAR2(100),                                         -- 최근 주문 상품명
+    POINT            NUMBER(10),                                            -- 적립 포인트
+    TEL              VARCHAR2(20),                                          -- 연락처
+    ADDRESS          VARCHAR2(200),                                         -- 주소
+    ZONECODE         VARCHAR2(10),                                          -- 우편번호
+    DETAIL_ADDRESS   VARCHAR2(200),                                         -- 상세주소
+    NOTIFICATION     VARCHAR2(1),                                           -- 알림 수신 여부 ('Y' or NULL)
+    NICKNAME         VARCHAR2(30),                                          -- 닉네임
+    CREATE_DATE      TIMESTAMP         DEFAULT systimestamp,                -- 생성일시
+    UPDATE_DATE      TIMESTAMP         DEFAULT systimestamp,                -- 수정일시
+    CONSTRAINT FK_BUYER_PAGE_MEMBER_ID FOREIGN KEY (MEMBER_ID)
+        REFERENCES MEMBER(MEMBER_ID)
+);
+
+
+-- 시퀀스 재생성
+CREATE SEQUENCE BUYER_PAGE_SEQ
+  START WITH 1
+  INCREMENT BY 1
+  NOCACHE
+  NOCYCLE;
+
+-- 닉네임 유니크 제약조건 추가
+ALTER TABLE BUYER_PAGE
+  ADD CONSTRAINT UK_BUYERPAGE_NICKNAME UNIQUE (NICKNAME);
+
+-- 샘플 데이터 삽입
+INSERT INTO BUYER_PAGE (PAGE_ID, MEMBER_ID, IMAGE, INTRO, RECENT_ORDER, POINT, TEL, ADDRESS, ZONECODE, DETAIL_ADDRESS, NOTIFICATION, NICKNAME, CREATE_DATE, UPDATE_DATE)
+VALUES (BUYER_PAGE_SEQ.NEXTVAL, 1, NULL, '안녕하세요. 여행을 좋아하는 사람입니다.', '제주도 해안도로 투어', 3000, '010-1234-5678', '서울시 강남구 테헤란로', '06130', '101동 202호', 'Y', 'user1', DEFAULT, DEFAULT);
+
+COMMIT;
+
+-- =======================================
+-- ✅ 1. 기존 테이블 및 시퀀스 삭제
+-- =======================================
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE SELLER_PAGE CASCADE CONSTRAINTS';
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END;
+
+
+DROP SEQUENCE SELLER_PAGE_SEQ;
+
+
+-- =======================================
+-- ✅ 2. SELLER_PAGE 테이블 생성
+-- =======================================
+CREATE TABLE SELLER_PAGE (
+  PAGE_ID           NUMBER(10) PRIMARY KEY,                 -- 마이페이지 ID
+  MEMBER_ID         NUMBER(10) NOT NULL,                    -- 회원 ID (외래키)
+  IMAGE             BLOB,                                   -- 프로필 이미지
+  INTRO             VARCHAR2(500),                          -- 자기소개
+  NICKNAME          VARCHAR2(30),                           -- 닉네임 (UNIQUE)
+  SALES_COUNT       NUMBER(10) DEFAULT 0,                   -- 누적 판매 건수
+  TOTAL_SALES       NUMBER(10) DEFAULT 0,                   -- 누적 매출액
+  REVIEW_AVG        NUMBER(3,2) DEFAULT 0,                  -- 평균 평점
+  REVIEW_COUNT      NUMBER(10) DEFAULT 0,                   -- 리뷰 수
+  RECENT_ORDER_CNT  NUMBER(10) DEFAULT 0,                   -- 최근 1주 주문 수
+  RECENT_QNA_CNT    NUMBER(10) DEFAULT 0,                   -- 최근 1주 문의 수
+  FOLLOWER_COUNT    NUMBER(10) DEFAULT 0,                   -- 팔로워 수
+  PRODUCT_COUNT     NUMBER(10) DEFAULT 0,                   -- 등록 상품 수
+  CATEGORY          VARCHAR2(50),                           -- 주력 카테고리
+  BANK_ACCOUNT      VARCHAR2(50),                           -- 정산 계좌
+  SNS_LINK          VARCHAR2(200),                          -- SNS 링크
+  IS_ACTIVE         CHAR(1) DEFAULT 'Y',                    -- 활동 여부
+  CREATE_DATE       TIMESTAMP DEFAULT systimestamp,         -- 생성일시
+  UPDATE_DATE       TIMESTAMP DEFAULT systimestamp          -- 수정일시
+);
+
+
+-- =======================================
+-- ✅ 3. 제약 조건 추가
+-- =======================================
+
+-- 닉네임 중복 방지 (UNIQUE)
+ALTER TABLE SELLER_PAGE ADD CONSTRAINT UK_SELLERPAGE_NICKNAME UNIQUE (NICKNAME);
+
+-- 회원 외래키 참조 (MEMBER 테이블)
+ALTER TABLE SELLER_PAGE ADD CONSTRAINT FK_SELLER_PAGE_MEMBER_ID FOREIGN KEY (MEMBER_ID) REFERENCES MEMBER(MEMBER_ID);
+
+
+
+-- =======================================
+-- ✅ 4. 시퀀스 생성
+-- =======================================
+CREATE SEQUENCE SELLER_PAGE_SEQ
+  START WITH 1
+  INCREMENT BY 1
+  NOCACHE
+  NOCYCLE;
+
+-- =======================================
+-- ✅ 5. 샘플 데이터 삽입
+-- =======================================
+INSERT INTO SELLER_PAGE (
+  PAGE_ID, MEMBER_ID, IMAGE, INTRO, NICKNAME,
+  SALES_COUNT, TOTAL_SALES, REVIEW_AVG, REVIEW_COUNT,
+  RECENT_ORDER_CNT, RECENT_QNA_CNT, FOLLOWER_COUNT, PRODUCT_COUNT,
+  CATEGORY, BANK_ACCOUNT, SNS_LINK, IS_ACTIVE,
+  CREATE_DATE, UPDATE_DATE
+) VALUES (
+  SELLER_PAGE_SEQ.NEXTVAL, 2, NULL, '안녕하세요. 여행 가이드 신형만입니다.', '신형만',
+  25, 980000, 4.25, 25,
+  9, 2, 250, 3,
+  '로컬 체험', '신한 123-456-7890', 'https://instagram.com/sin_guide', 'Y',
+  DEFAULT, DEFAULT
+);
+
+
+-- 전화번호, 우편번호, 주소, 상세주소 추가
+ALTER TABLE SELLER_PAGE ADD TEL VARCHAR2(20);             -- 전화번호
+ALTER TABLE SELLER_PAGE ADD ZONECODE VARCHAR2(10);        -- 우편번호
+ALTER TABLE SELLER_PAGE ADD ADDRESS VARCHAR2(200);        -- 기본 주소
+ALTER TABLE SELLER_PAGE ADD DETAIL_ADDRESS VARCHAR2(200); -- 상세 주소
+
+COMMIT;
+
+-- 기존 테이블 삭제
+DROP TABLE product CASCADE CONSTRAINT;
+DROP TABLE product_image CASCADE CONSTRAINT;
+DROP TABLE product_course_point CASCADE CONSTRAINT;
+
+-- 기존 시퀀스 삭제
+DROP SEQUENCE PRODUCT_PRODUCT_ID_SEQ;
+DROP SEQUENCE IMAGE_IMAGE_ID_SEQ;
+DROP SEQUENCE COURSE_COURSE_ID_SEQ;
+
+
+-- 테이블 생성
+CREATE TABLE product(
+        product_id           NUMBER(10),
+        member_id              NUMBER(10),
+        category              varchar2(30)         NOT NULL,
+        title                 varchar2(90)         NOT NULL,
+        guide_yn              char(1)           NOT NULL,
+        normal_price           NUMBER(7)         NOT NULL,
+        guide_price           NUMBER(7)          NOT NULL,
+        sales_price           NUMBER(7)          NOT NULL,
+        sales_guide_price         NUMBER(7)          NOT NULL,
+        total_day             NUMBER(2)         NOT NULL,
+        total_time             NUMBER(2)          NOT NULL,
+        req_money              NUMBER(7)           NOT NULL,
+        sleep_info           char(1),
+        transport_info        varchar2(45),
+        food_info              char(1),
+        req_people            varchar2(45)      NOT NULL,
+        target              varchar2(45)       NOT NULL,
+        stucks              varchar2(90),
+        description           varchar2(1500)        NOT NULL,
+        detail              varchar2(3000)      NOT NULL,
+        file_name              varchar2(255)        NOT NULL,
+        file_type              varchar2(50)       NOT NULL,
+        file_size              NUMBER             NOT NULL,
+        file_data              BLOB             NOT NULL,
+        price_detail         varchar2(450)        NOT NULL,
+        gprice_detail         varchar2(450)        NOT NULL,
+        status               varchar2(12)         NOT NULL,
+        create_date                              date,
+        update_date                              date
+);
+
+-- 제약 조건 추가
+ALTER TABLE product ADD PRIMARY KEY(product_id);
+ALTER TABLE product ADD FOREIGN KEY(member_id) REFERENCES member(member_id);
+ALTER TABLE product ADD CHECK (category IN ('area','pet','restaurant','culture_history','season_nature','silver_disables'));
+ALTER TABLE product ADD CHECK (guide_yn IN ('Y', 'N'));
+ALTER TABLE product MODIFY (guide_yn DEFAULT 'N');
+ALTER TABLE product MODIFY (normal_price DEFAULT 0);
+ALTER TABLE product MODIFY (guide_price DEFAULT 0);
+ALTER TABLE product MODIFY (sales_price DEFAULT 0);
+ALTER TABLE product MODIFY (sales_guide_price DEFAULT 0);
+ALTER TABLE product ADD CHECK (total_day >=0);
+ALTER TABLE product MODIFY (total_day DEFAULT 0);
+ALTER TABLE product ADD CHECK (total_time >= 0 AND total_time < 24);
+ALTER TABLE product MODIFY (total_time DEFAULT 0);
+ALTER TABLE product ADD CHECK (req_money >= 0);
+ALTER TABLE product MODIFY (req_money DEFAULT 0);
+ALTER TABLE product ADD CHECK (sleep_info IN ('Y', 'N'));
+ALTER TABLE product MODIFY (sleep_info DEFAULT 'N');
+ALTER TABLE product ADD CHECK (food_info IN ('Y', 'N'));
+ALTER TABLE product MODIFY (food_info DEFAULT 'N');
+ALTER TABLE product ADD CHECK (status IN ('판매중', '판매대기'));
+ALTER TABLE product MODIFY (create_date NOT NULL);
+ALTER TABLE product MODIFY (create_date DEFAULT sysdate);
+ALTER TABLE product MODIFY (update_date DEFAULT sysdate);
+
+-- 시퀀스 생성
+CREATE SEQUENCE PRODUCT_PRODUCT_ID_SEQ;
+
+-- 테이블 생성
+CREATE TABLE product_image(
+        image_id  NUMBER(10),
+        product_id  NUMBER(10),
+        image_data  BLOB  NOT NULL,
+        image_order  NUMBER(2)  NOT NULL,
+        file_name  varchar2(255),
+        file_size   NUMBER,
+        mime_type  varchar2(50),
+        upload_time date NOT NULL
+);
+
+-- 제약 조건 추가
+ALTER TABLE product_image ADD PRIMARY KEY(image_id);
+ALTER TABLE product_image ADD FOREIGN KEY(product_id) REFERENCES product(product_id);
+ALTER TABLE product_image MODIFY (upload_time DEFAULT sysdate);
+
+-- 시퀀스 생성
+CREATE SEQUENCE IMAGE_IMAGE_ID_SEQ;
+
+-- 테이블 생성
+CREATE TABLE product_course_point (
+        course_point_id  NUMBER(10),
+        product_id  NUMBER(10),
+        point_order  NUMBER  NOT NULL,
+        latitude  NUMBER(9,6)  NOT NULL,
+        longitude  NUMBER(9,6)  NOT NULL,
+        description   varchar2(500),
+        created_at  date
+);
+
+-- 제약 조건 추가
+ALTER TABLE product_course_point ADD PRIMARY KEY(course_point_id);
+ALTER TABLE product_course_point ADD FOREIGN KEY(product_id) REFERENCES product(product_id);
+ALTER TABLE product_course_point MODIFY (created_at DEFAULT sysdate);
+
+-- 시퀀스 생성
+CREATE SEQUENCE COURSE_COURSE_ID_SEQ;
+
+COMMIT;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -35,25 +35,23 @@ INSERT INTO code(code_id,decode,pcode_id)
 VALUES ('B01','카테고리',NULL);
 
 INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0101','장애인','B01');
+VALUES ('B0101','지역','B01');
 
 INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0102','의료/미용','B01');
+VALUES ('B0102','반려동물','B01');
 
 INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0103','시즌','B01');
+VALUES ('B0103','맛집','B01');
 
 INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0104','반려견','B01');
+VALUES ('B0104','문화/역사','B01');
 
 INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0105','문화','B01');
+VALUES ('B0105','계절/자연','B01');
 
 INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0106','맛집','B01');
+VALUES ('B0106','실버/교통약자','B01');
 
-INSERT INTO code(code_id,decode,pcode_id)
-VALUES ('B0107','실버','B01');
 ----------------------------------------------------------------------
 INSERT INTO code(code_id,decode,pcode_id)
 VALUES ('B02','게시판 상태',NULL);

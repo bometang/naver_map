@@ -4,7 +4,7 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN NULL;
 END;
-/
+
 
 -- 기존 시퀀스 삭제
 DROP SEQUENCE buyer_page_seq;

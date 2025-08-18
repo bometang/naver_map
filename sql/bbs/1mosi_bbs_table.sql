@@ -6,7 +6,7 @@ drop table rbbs;
 drop table bbs_like;
 DROP TABLE bbs_report;
 drop table bbs;
---DROP TABLE code;
+DROP TABLE code;
 
 --DROP TABLE member_role;
 --DROP TABLE ROLE;
@@ -70,23 +70,23 @@ DROP SEQUENCE bbs_upload_upload_group_seq;
 --------------------------------------------------------
 --코드
 --------------------------------------------------------
---create table code(
---code_id     varchar2(11) PRIMARY KEY,       --코드
---DECODE      varchar2(30) NOT null,          --코드명
---discript    clob,                           --코드설명
---pcode_id    varchar2(11),                   --상위코드
---useyn       char(1) default 'Y' NOT null,   --사용여부 (사용:'Y',미사용:'N')
---cdate       timestamp default systimestamp,
---udate       timestamp
---);
-----외래키
---alter table code
---add constraint fk_code_pcode_id
---foreign key(pcode_id)
---references code(code_id);
---
-----제약조건
---alter table code add constraint code_useyn_ck check(useyn in ('Y','N'));
+create table code(
+code_id     varchar2(11) PRIMARY KEY,       --코드
+DECODE      varchar2(30) NOT null,          --코드명
+discript    clob,                           --코드설명
+pcode_id    varchar2(11),                   --상위코드
+useyn       char(1) default 'Y' NOT null,   --사용여부 (사용:'Y',미사용:'N')
+cdate       timestamp default systimestamp,
+udate       timestamp
+);
+--외래키
+alter table code
+add constraint fk_code_pcode_id
+foreign key(pcode_id)
+references code(code_id);
+
+--제약조건
+alter table code add constraint code_useyn_ck check(useyn in ('Y','N'));
 --------------------------------------------------------
 
 --------------------------------------------------------
