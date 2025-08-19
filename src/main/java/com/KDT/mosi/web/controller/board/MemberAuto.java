@@ -53,7 +53,7 @@ public class MemberAuto {
   /**
    * member_id = 1 인 사용자를 세션에 로그인 처리
    */
-  @GetMapping("/test-login")
+  @GetMapping("/lo")
   public String testLogin(HttpServletRequest request) {
     // 1) 임시 사용자 조회
     Member member = memberSVC.findByEmail("a")
