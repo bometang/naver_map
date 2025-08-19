@@ -54,11 +54,24 @@
           <input type="hidden" name="score" id="score" value="0">
           <output id="scoreText">0.0</output>
         </div>
+        <div class="review-tags" id="reviewTags">
+          <h2 class="subtitle">태그 선택</h2>
+          <div class="tag-list">
+          </div>
+          <input type="hidden" name="selectedTags" id="selectedTags" value="">
+        </div>
+        <div class="review-content">
+          <label for="content">리뷰 내용</label>
+          <textarea id="content" name="content" rows="6" placeholder="리뷰를 입력하세요"></textarea>
+        </div>
+        <div class="actions">
+          <button type="button" id="saveBtn" class="btn btn--primary">저장</button>
+        </div>
       </section>
     </main>
   </div>
 </div>
 </body>
 <script src="/js/review/rating-precise.js" defer></script>
-<script src="/js/review/reviewWrite.js" defer></script>
+<script src="/js/review/reviewWrite.js" type="module" defer></script>
 </html>

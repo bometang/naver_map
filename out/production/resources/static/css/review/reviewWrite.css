@@ -19,3 +19,28 @@
   position:absolute; top:0; left:100%; width:0; height:100%; /* 좌표/크기는 JS에서 세팅 */
   cursor:pointer; background:transparent;
 }
+.review-tags {
+  margin-top: 20px;
+}
+.review-tags .subtitle {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+.review-tags .tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.review-tags .tag {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.review-tags .tag.selected {
+  background: #ffe08a;
+  border-color: #f0c000;
+  color: #333;
+}
