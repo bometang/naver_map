@@ -1,46 +1,87 @@
-/* 기본 레이아웃/스타일 */
-.rating-precise{ position:relative; display:inline-flex; align-items:center; gap:10px }
-.rating-precise .stars{
-  position:relative; width:150px; height:30px; line-height:30px; cursor:pointer;
-  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:none;
+/* ===== 기본 레이아웃 ===== */
+.rating-precise{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-family:inherit;
 }
+
+/* 래퍼: 좌표/오버슈트 기준 */
+.rating-precise .stars-wrap{
+  position:relative;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none; -webkit-user-select:none;
+  touch-action:none;
+}
+
+/* 오른쪽 보이지 않는 확장 히트존 (오버슈트) */
+.rating-precise .stars-wrap::after{
+  content:"";
+  position:absolute;
+  top:0; right:-24px;          /* JS의 RIGHT_OVERSHOOT_PX = 24px 과 동일 */
+  width:24px; height:100%;
+  /* 투명하지만 클릭은 잡힘(pointer-events 기본값 auto) */
+}
+
+/* 별 렌더 */
+.rating-precise .stars{
+  --fill: 0%;                  /* JS에서 setProperty('--fill', 'xx%') */
+  position:relative;
+  width:150px;                 /* 5개 * 28px + 자간 4 * 3px ≈ 152px, 실제 폰트에 맞춰 조정 */
+  height:30px; line-height:30px;
+  cursor:pointer;
+  outline:none;
+}
+
+/* 회색 바탕 별 + 채움 별 (텍스트 오버레이) */
 .rating-precise .stars::before,
 .rating-precise .stars::after{
-  content:"★★★★★"; position:absolute; left:0; top:0; font-size:28px; letter-spacing:3px; pointer-events:none;
-  transition:opacity .12s ease, filter .12s ease;
+  content:"★★★★★";
+  position:absolute; left:0; top:0;
+  font-size:28px;
+  letter-spacing:3px;
+  pointer-events:none;
+  transition:opacity .12s ease, filter .12s ease, color .12s ease;
 }
-.rating-precise .stars::before{ color:#ddd; opacity:.9 }              /* 회색 바탕 별 */
-.rating-precise .stars::after { color:#f5a623; width:var(--fill,0%); overflow:hidden; white-space:nowrap; opacity:1 } /* 채움 별 */
-.rating-precise:focus-visible .stars{ outline:2px solid #2684ff; outline-offset:2px }
-.rating-precise .score-text, .rating-precise output{ min-width:3ch; font-variant-numeric:tabular-nums }
 
-/* 오른쪽 보이지 않는 확장 히트존: 클릭하면 5점 */
-.rating-precise .hit-end{
-  position:absolute; top:0; left:100%; width:0; height:100%; /* 좌표/크기는 JS에서 세팅 */
-  cursor:pointer; background:transparent;
+.rating-precise .stars::before{
+  color:#ddd; opacity:.9;              /* 회색 바탕 별 */
 }
-.review-tags {
-  margin-top: 20px;
+
+.rating-precise .stars::after{
+  color:#f5a623;                       /* 채움 별 색 */
+  width:var(--fill);                   /* 채워질 비율 */
+  overflow:hidden; white-space:nowrap; opacity:1;
 }
-.review-tags .subtitle {
-  font-size: 1rem;
-  margin-bottom: 10px;
+
+/* 호버 시 살짝 밝게 */
+.rating-precise .stars-wrap:hover .stars::after{
+  color:#ffc04d;
 }
-.review-tags .tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+
+/* 키보드 포커스 접근성 */
+.rating-precise:focus-within .stars{
+  outline:2px solid #2684ff;
+  outline-offset:2px;
 }
+
+/* 숫자 출력 */
+.rating-precise .score-text,
+.rating-precise output{
+  min-width:3ch;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ===== (기존) 태그 스타일 유지 ===== */
+.review-tags { margin-top:20px; }
+.review-tags .subtitle { font-size:1rem; margin-bottom:10px; }
+.review-tags .tag-list { display:flex; flex-wrap:wrap; gap:8px; }
 .review-tags .tag {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 16px;
-  background: #f9f9f9;
-  cursor: pointer;
-  font-size: 0.9rem;
+  padding:6px 12px; border:1px solid #ccc; border-radius:16px;
+  background:#f9f9f9; cursor:pointer; font-size:.9rem;
 }
 .review-tags .tag.selected {
-  background: #ffe08a;
-  border-color: #f0c000;
-  color: #333;
+  background:#ffe08a; border-color:#f0c000; color:#333;
 }

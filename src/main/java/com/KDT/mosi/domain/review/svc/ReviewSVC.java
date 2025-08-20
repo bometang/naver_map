@@ -1,8 +1,9 @@
 package com.KDT.mosi.domain.review.svc;
 
+import com.KDT.mosi.domain.entity.review.Review;
 import com.KDT.mosi.domain.entity.review.ReviewInfo;
 import com.KDT.mosi.domain.entity.review.ReviewProduct;
-import com.KDT.mosi.web.form.review.ReviewTag;
+import com.KDT.mosi.web.form.review.TagInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +16,11 @@ public interface ReviewSVC {
   Optional<ReviewInfo> findBuyerIdByOrderItemId(Long id);
 
   //태그 반환
-  List<ReviewTag> findTagList(String category);
+  List<TagInfo> findTagList(String category);
 
   //태그 카테고리 확인
   boolean categoryFind(String category);
+
+  //리뷰 저장
+  Long reviewSave(List<Long> ids, Review review,String category);
 }

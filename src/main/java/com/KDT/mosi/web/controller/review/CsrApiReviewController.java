@@ -29,7 +29,6 @@ public class CsrApiReviewController {
                     Model model) {
 
     Long memberId = user.getMember().getMemberId();
-    log.info("memberId={}", memberId);
 
     Optional<ReviewProduct> reviewProductOpt = reviewSVC.summaryFindById(orderItemId, memberId);
 

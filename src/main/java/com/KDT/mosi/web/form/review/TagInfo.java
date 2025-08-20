@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewTag {
+public class TagInfo {
   private Long tagId;
   private String label;
   private String slug;

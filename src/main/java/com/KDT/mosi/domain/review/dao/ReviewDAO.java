@@ -1,8 +1,10 @@
 package com.KDT.mosi.domain.review.dao;
 
+import com.KDT.mosi.domain.entity.review.Review;
 import com.KDT.mosi.domain.entity.review.ReviewInfo;
 import com.KDT.mosi.domain.entity.review.ReviewProduct;
-import com.KDT.mosi.web.form.review.ReviewTag;
+import com.KDT.mosi.domain.entity.review.ReviewTag;
+import com.KDT.mosi.web.form.review.TagInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +17,18 @@ public interface ReviewDAO {
   Optional<ReviewInfo> findBuyerIdByOrderItemId(Long id);
 
   //태그 반환
-  List<ReviewTag> findTagList(String category);
+  List<TagInfo> findTagList(String category);
 
   //구매 상품 id 조회
 
   //리뷰 저장
+  Long saveReview(Review review);
 
+  //리뷰 태그 저장
+  int saveReviewTag(ReviewTag reviewTag);
+
+  //리뷰 태그 확인
+  boolean findTagId(Long id,String category);
   //리뷰 삭제
 
   //리뷰 목록

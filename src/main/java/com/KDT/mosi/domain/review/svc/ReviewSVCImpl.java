@@ -2,18 +2,18 @@ package com.KDT.mosi.domain.review.svc;
 
 import com.KDT.mosi.domain.common.svc.CodeSVC;
 import com.KDT.mosi.domain.dto.CodeDTO;
+import com.KDT.mosi.domain.entity.review.Review;
 import com.KDT.mosi.domain.entity.review.ReviewInfo;
 import com.KDT.mosi.domain.entity.review.ReviewProduct;
+import com.KDT.mosi.domain.entity.review.ReviewTag;
 import com.KDT.mosi.domain.review.dao.ReviewDAO;
-import com.KDT.mosi.web.form.review.ReviewTag;
+import com.KDT.mosi.web.form.review.TagInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class ReviewSVCImpl implements ReviewSVC{
   }
 
   @Override
-  public List<ReviewTag> findTagList(String category) {
+  public List<TagInfo> findTagList(String category) {
     if (!categoryFind(category)) {
       return List.of(); // 카테고리가 없으면 빈 리스트
     }
@@ -75,5 +75,37 @@ public class ReviewSVCImpl implements ReviewSVC{
 
     return list != null && list.stream()
         .anyMatch(c -> codeId.equalsIgnoreCase(c.getCodeId()));
+  }
+
+  @Override
+  public Long reviewSave(List<Long> ids, Review review, String category) {
+    // 1) 카테고리별 허용 태그 조회
+    List<TagInfo> allowedTags = reviewDAO.findTagList(category);
+
+    Set<Long> allowedIds = allowedTags.stream()
+        .map(TagInfo::getTagId)
+        .collect(Collectors.toSet());
+
+    // 2) 요청된 태그 검증
+    for (Long id : ids) {
+      if (!allowedIds.contains(id)) {
+        throw new IllegalArgumentException("허용되지 않는 태그입니다. tagId=" + id);
+      }
+    }
+
+    // 3) 리뷰 저장
+    Long reviewId = reviewDAO.saveReview(review);
+
+    // 4) 리뷰-태그 매핑 저장
+    Long sortOrder = 1L;
+    for (Long tagId : ids) {
+      ReviewTag rt = new ReviewTag();
+      rt.setReviewId(reviewId);
+      rt.setTagId(tagId);
+      rt.setSortOrder(sortOrder++);
+      reviewDAO.saveReviewTag(rt);
+    }
+
+    return reviewId;
   }
 }

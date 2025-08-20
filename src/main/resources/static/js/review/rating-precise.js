@@ -1,74 +1,53 @@
 // /js/review/rating-precise.js
 (() => {
-  const root   = document.getElementById('ratingPrecise');
+  const root = document.getElementById('ratingPrecise');
   if (!root) return;
 
+  const wrap   = root.querySelector('.stars-wrap');
   const stars  = root.querySelector('.stars');
   const input  = root.querySelector('#score');
   const output = root.querySelector('#scoreText');
 
   const MAX  = 5;
   const STEP = 0.1;
-
-  // ✔ 바깥 클릭 허용 범위(px) — 이 영역에서 클릭하면 5.0
-  const RIGHT_OVERSHOOT_PX = 24;
+  const RIGHT_OVERSHOOT_PX = 24; // CSS의 확장폭과 동일하게
 
   let selected = Number.parseFloat(input?.value) || 0;
 
+  // 범위 제한
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
+  // 0.1 단위 반올림 스냅 (간결화)
+  const snap = (raw) => Number(clamp(Math.round(raw / STEP) * STEP, 0, MAX).toFixed(1));
+
+  // 시각 반영
   const setVisual = (val) => {
-    const pct = clamp((val / MAX) * 100, 0, 100);
-    stars.style.setProperty('--fill', `${pct}%`);
+    stars.style.setProperty('--fill', `${clamp((val / MAX) * 100, 0, 100)}%`);
     output.value = val.toFixed(1);
   };
 
-  const snap = (raw) => {
-    const snapped = Math.round(raw / STEP) * STEP;
-    const fixed = STEP < 1 ? 1 : 0;
-    return Number(clamp(snapped, 0, MAX).toFixed(fixed));
-  };
-
-  // 호버/미리보기: 별 영역 "내부"만 사용
+  // wrap 내부 비율 → 값
   const posToValueInside = (clientX) => {
-    const rect = stars.getBoundingClientRect();
+    const rect = wrap.getBoundingClientRect();
     const x = clamp(clientX - rect.left, 0, rect.width);
-    const ratio = rect.width ? x / rect.width : 0;
-    return snap(ratio * MAX);
+    return snap((x / (rect.width || 1)) * MAX);
   };
 
-  // 클릭 확정: 오른쪽 바깥 클릭을 5.0으로 인정
+  // 오른쪽 바깥(오버슈트) 클릭 시 5점
   const posToValueWithOvershoot = (clientX) => {
-    const rect = stars.getBoundingClientRect();
-    if (clientX > rect.right && clientX <= rect.right + RIGHT_OVERSHOOT_PX) {
-      return MAX;
-    }
+    const rect = wrap.getBoundingClientRect();
+    if (clientX > rect.right && clientX <= rect.right + RIGHT_OVERSHOOT_PX) return MAX;
     return posToValueInside(clientX);
   };
 
-  // 초기 표시
   setVisual(selected);
 
-  // 이벤트: 루트에서 받아 별 오른쪽 여백 클릭도 처리
-  root.addEventListener('mousemove', (e) => setVisual(posToValueInside(e.clientX)));
-  root.addEventListener('mouseleave', () => setVisual(selected));
-  root.addEventListener('click', (e) => {
+  wrap.addEventListener('mousemove', (e) => setVisual(posToValueInside(e.clientX)));
+  wrap.addEventListener('mouseleave', () => setVisual(selected));
+  wrap.addEventListener('click', (e) => {
     selected = posToValueWithOvershoot(e.clientX);
     input.value = selected.toFixed(1);
     setVisual(selected);
   });
 
-  // 터치: 미리보기는 내부만, 확정은 바깥 클릭 허용
-  root.addEventListener('touchmove', (e) => {
-    const t = e.touches?.[0];
-    if (t) setVisual(posToValueInside(t.clientX));
-  }, { passive: true });
-
-  root.addEventListener('touchend', (e) => {
-    const t = e.changedTouches?.[0];
-    if (!t) return;
-    selected = posToValueWithOvershoot(t.clientX);
-    input.value = selected.toFixed(1);
-    setVisual(selected);
-  });
 })();

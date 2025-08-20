@@ -1,8 +1,14 @@
 import { ajax } from '/js/community/common.js';
 
+//카테고리,태그 관련
 const product_category = document.querySelector('.summary')?.getAttribute('data-category') ?? null;
 const tagListEl = document.querySelector('#reviewTags .tag-list');
 const selectedTagsInput = document.getElementById('selectedTags');
+
+//전송 관련
+const saveBtn   = document.getElementById('saveBtn');
+const scoreEl   = document.getElementById('score');     // hidden (별점)
+const contentEl = document.getElementById('content');   // textarea
 
 try {
   if (product_category) {
@@ -18,10 +24,57 @@ try {
 }
 
 // 클릭 이벤트: 여러개 선택 가능
+let selectedOrder = [];
+
 tagListEl?.addEventListener('click', e => {
   if (!e.target.classList.contains('tag')) return;
-  e.target.classList.toggle('selected');
+  const id = e.target.dataset.id;
 
-  const selected = [...tagListEl.querySelectorAll('.tag.selected')].map(el => el.dataset.id);
-  selectedTagsInput.value = selected.join(',');
+  if (e.target.classList.toggle('selected')) {
+    // 새로 선택 → 순서 배열에 추가
+    selectedOrder.push(id);
+  } else {
+    // 해제 → 배열에서 제거
+    selectedOrder = selectedOrder.filter(item => item !== id);
+  }
+
+  selectedTagsInput.value = selectedOrder.join(',');
+
+  console.log('클릭 순서대로:', selectedOrder);
+});
+
+const parseOrderItemId = () => {
+  const seg = location.pathname.split('/').filter(Boolean);
+  const id = Number(seg.at(-1));
+  return Number.isFinite(id) ? id : null;
+};
+
+// === 추가 3) 저장 버튼 클릭 → 서버 전송 ===
+saveBtn?.addEventListener('click', async () => {
+  const orderItemId = parseOrderItemId();
+  const score   = Number(scoreEl?.value || 0);
+  const content = (contentEl?.value || '').trim();
+  const tags    = selectedOrder.map(n => Number(n)).filter(Number.isFinite); // 선택 순서 그대로
+
+  // 최소 검증
+  if (!orderItemId) { alert('주문 항목 식별자가 없습니다.'); return; }
+  if (score <= 0 || score > 5) { alert('별점을 선택해 주세요.'); return; }
+
+  const payload = { orderItemId, score, content, tags }; // 서버 규격에 맞게 키 이름만 필요시 변경
+
+  try {
+    saveBtn.disabled = true;
+    const res = await ajax.post('/api/review', payload);
+    if (res?.header?.rtcd === 'S00') {
+      alert('리뷰가 저장되었습니다.');
+      // 필요 시 이동: location.href = '/review/list';
+    } else {
+      alert(res?.header?.rtmsg || '저장에 실패했습니다.');
+    }
+  } catch (err) {
+    console.error('리뷰 저장 실패:', err);
+    alert('서버 통신 중 오류가 발생했습니다.');
+  } finally {
+    saveBtn.disabled = false;
+  }
 });
