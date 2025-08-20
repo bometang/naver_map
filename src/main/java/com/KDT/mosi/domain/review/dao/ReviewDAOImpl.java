@@ -18,6 +18,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
@@ -94,8 +95,8 @@ public class ReviewDAOImpl implements ReviewDAO{
   @Override
   public Long saveReview(Review review) {
     StringBuffer sql = new StringBuffer();
-    sql.append("INSERT INTO review(REVIEW_ID,PRODUCT_ID,BUYER_ID,ORDER_ID,content,SCORE) ");
-    sql.append("VALUES (REVIEW_SEQ.nextval,:productId,:buyerId,:orderId,:content,:score) ");
+    sql.append("INSERT INTO review(REVIEW_ID,PRODUCT_ID,BUYER_ID,ORDER_ITEM_ID,content,SCORE) ");
+    sql.append("VALUES (REVIEW_SEQ.nextval,:productId,:buyerId,:orderItemId,:content,:score) ");
 
     SqlParameterSource param = new BeanPropertySqlParameterSource(review);
     KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -131,5 +132,54 @@ public class ReviewDAOImpl implements ReviewDAO{
     if(i>0) return true;
 
     return false;
+  }
+
+  @Override
+  public int updateReviewed(Long orderItemId) {
+    String sql = "UPDATE ORDER_ITEMS " +
+        "SET REVIEWED = 'Y' " +
+        "WHERE ORDER_ITEM_ID = :orderItemId";
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("orderItemId", orderItemId);
+
+    return template.update(sql, params);
+  }
+
+  @Override
+  public Optional<String> findCategory(Long orderItemId) {
+    String sql = """
+      SELECT p.category
+        FROM order_items oi
+        JOIN product p ON p.product_id = oi.product_id
+       WHERE oi.order_item_id = :orderItemId
+      """;
+    MapSqlParameterSource params = new MapSqlParameterSource("orderItemId", orderItemId);
+    List<String> list = template.query(sql, params,
+        (rs, rn) -> rs.getString(1));
+    return list.stream().findFirst();
+  }
+
+  @Override
+  public List<Review> reviewFindAll(Long buyerId, int pageNo, int numOfRows) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("SELECT REVIEW_ID, PRODUCT_ID, BUYER_ID, ORDER_ITEM_ID,CONTENT, SCORE, SELLER_RECOYN, STATUS, CREATE_DATE, UPDATE_DATE ");
+    sql.append("FROM review ");
+    sql.append("WHERE buyer_id= :buyerId ");
+    sql.append("ORDER BY create_date DESC ");
+    sql.append("  OFFSET (:pageNo -1) * :numOfRows ROWS ");
+    sql.append("FETCH NEXT :numOfRows ROWS ONLY ");
+
+    Map<String,Object> map = Map.of("buyerId",buyerId,"pageNo", pageNo, "numOfRows", numOfRows);
+
+    //db요청
+    List<Review> list = template.query(sql.toString(),map, BeanPropertyRowMapper.newInstance(Review.class));
+
+    return list;
+  }
+
+  @Override
+  public int getReviewTotalCount() {
+    return 0;
   }
 }

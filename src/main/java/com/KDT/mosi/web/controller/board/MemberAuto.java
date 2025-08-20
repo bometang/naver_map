@@ -87,6 +87,40 @@ public class MemberAuto {
     return "redirect:/";   // 필터 체인을 통과하는 경로로 이동
   }
 
+  @GetMapping("/lo2")
+  public String testLogin2(HttpServletRequest request) {
+    // 1) 임시 사용자 조회
+    Member member = memberSVC.findByEmail("bo@naver.com")
+        .or(() -> memberSVC.findByEmail("shinnosuke@naver.com"))
+        .or(() -> memberSVC.findByEmail("test5@kh.com"))
+        .orElseThrow(() -> new IllegalStateException(
+            "dev(a), shinnosuke@naver.com, test5@kh.com 계정이 모두 없습니다."
+        ));
+
+    List<Role> roles = memberRoleDAO.findRolesByMemberId(member.getMemberId());
+
+    // 2) Authentication 객체 준비
+    UserDetails userDetails = new CustomUserDetails(member,roles);   // ← UserDetails 구현체
+    UsernamePasswordAuthenticationToken auth =
+        new UsernamePasswordAuthenticationToken(
+            userDetails, null, userDetails.getAuthorities());
+
+    // 3) SecurityContextHolder(현재 쓰레드)에 저장
+    SecurityContext context = SecurityContextHolder.createEmptyContext();   // ⭐ 추가
+    context.setAuthentication(auth);                                        // ⭐ 추가
+    SecurityContextHolder.setContext(context);
+
+    // 4) 세션에 SecurityContext + 프로필 캐시 저장
+    HttpSession session = request.getSession(true);
+    session.setAttribute(
+        HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,   // ⭐ 핵심 키
+        context);                                                            // ⭐ 추가
+    session.setAttribute("loginMember", member);        // (옵션) 뷰용 캐시
+    session.setAttribute("loginMemberId", member.getMemberId());
+
+    return "redirect:/";   // 필터 체인을 통과하는 경로로 이동
+  }
+
   @GetMapping("/update-pics")
   public String updateAllPics(HttpSession session) throws IOException {
     // 두 경로를 미리 정의

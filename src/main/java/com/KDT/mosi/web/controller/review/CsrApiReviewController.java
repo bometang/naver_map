@@ -23,7 +23,7 @@ public class CsrApiReviewController {
 
   private final ReviewSVC reviewSVC;
 
-  @GetMapping("/{orderItemId}")
+  @GetMapping("/add/{orderItemId}")
   public String bbs(@PathVariable("orderItemId") Long orderItemId,
                     @AuthenticationPrincipal CustomUserDetails user,
                     Model model) {

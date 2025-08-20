@@ -29,13 +29,18 @@ public interface ReviewDAO {
 
   //리뷰 태그 확인
   boolean findTagId(Long id,String category);
+
+  //리뷰 작성
+  int updateReviewed(Long orderItemId);
+
+  //product category 확인
+  Optional<String> findCategory(Long orderItemId);
+
   //리뷰 삭제
 
   //리뷰 목록
+  List<Review> reviewFindAll(Long buyerId, int pageNo, int numOfRows);
 
-  //리뷰 작성 유무
-
-  //리뷰 카테고리,공통 태그 조회
-
-
+  //리뷰 전체 갯수
+  int getReviewTotalCount();
 }

@@ -1,22 +1,20 @@
 package com.KDT.mosi.web.controller.review;
 
-import com.KDT.mosi.domain.entity.board.Bbs;
+import com.KDT.mosi.domain.entity.review.Review;
 import com.KDT.mosi.domain.review.svc.ReviewSVC;
 import com.KDT.mosi.web.api.ApiResponse;
 import com.KDT.mosi.web.api.ApiResponseCode;
-import com.KDT.mosi.web.form.board.bbs.SaveApi;
+import com.KDT.mosi.web.form.review.ReviewSaveApi;
 import com.KDT.mosi.web.form.review.TagInfo;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequestMapping("/api/review")
@@ -28,24 +26,26 @@ public class ApiReviewController {
 
   //게시글 추가
   @PostMapping
-  public ResponseEntity<ApiResponse<Bbs>> add(
-      @RequestBody @Valid SaveApi saveApi,
+  public ResponseEntity<ApiResponse<Review>> add(
+      @RequestBody @Valid ReviewSaveApi reviewSaveApi,
       HttpSession session
   ) {
-    Long memberId = (Long) session.getAttribute("loginMemberId");
-    saveApi.setMemberId(memberId);
-    Bbs bbs = new Bbs();
-    BeanUtils.copyProperties(saveApi, bbs);
-    Long id = bbsSVC.save(bbs);
-    if (saveApi.getUploadGroup() != null) {
-      bbsUploadSVC.bindGroupToBbs(id,saveApi.getUploadGroup());
-    }
-    Optional<Bbs> optionalBbs = bbsSVC.findById(id);
-    Bbs findedBbs = optionalBbs.orElseThrow();
+    // 1) 로그인 사용자 id 세션에서 꺼내기
+    Long loginId = (Long) session.getAttribute("loginMemberId");
 
-    ApiResponse<Bbs> postBbsApiResponse = ApiResponse.of(ApiResponseCode.SUCCESS, findedBbs);
+    // 2) Review 엔티티 변환
+    Review review = new Review();
+    review.setOrderItemId(reviewSaveApi.getOrderItemId());
+    review.setBuyerId(loginId);
+    review.setScore(reviewSaveApi.getScore());
+    review.setContent(reviewSaveApi.getContent());
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(postBbsApiResponse);
+    // 3) 저장 (id 반환)
+    Long reviewId = reviewSVC.reviewSave(reviewSaveApi.getTagIds(), review);
+
+    return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .body(ApiResponse.of(ApiResponseCode.SUCCESS, null));
   }
 
 

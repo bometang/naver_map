@@ -26,19 +26,34 @@ try {
 // 클릭 이벤트: 여러개 선택 가능
 let selectedOrder = [];
 
+// 선택 순서 배지 갱신
+const updateOrderBadges = () => {
+  // 일단 모두 비우고
+  tagListEl?.querySelectorAll('.tag').forEach(el => el.removeAttribute('data-order'));
+  // selectedOrder 순서대로 번호 부여(1부터)
+  selectedOrder.forEach((id, idx) => {
+    const el = tagListEl?.querySelector(`.tag[data-id="${id}"]`);
+    if (el) el.setAttribute('data-order', String(idx + 1));
+  });
+  // hidden input 동기화
+  selectedTagsInput.value = selectedOrder.join(',');
+};
+
 tagListEl?.addEventListener('click', e => {
   if (!e.target.classList.contains('tag')) return;
   const id = e.target.dataset.id;
 
   if (e.target.classList.toggle('selected')) {
-    // 새로 선택 → 순서 배열에 추가
+    // 새 선택 → 순서 배열에 추가
     selectedOrder.push(id);
   } else {
-    // 해제 → 배열에서 제거
+    // 해제 → 배열에서 제거 & 이 버튼의 배지 제거
     selectedOrder = selectedOrder.filter(item => item !== id);
+    e.target.removeAttribute('data-order');
   }
 
-  selectedTagsInput.value = selectedOrder.join(',');
+  // 번호 다시 매기기
+  updateOrderBadges();
 
   console.log('클릭 순서대로:', selectedOrder);
 });
@@ -49,25 +64,29 @@ const parseOrderItemId = () => {
   return Number.isFinite(id) ? id : null;
 };
 
-// === 추가 3) 저장 버튼 클릭 → 서버 전송 ===
+// 3) 저장 버튼 클릭 → 서버 전송 ===
 saveBtn?.addEventListener('click', async () => {
   const orderItemId = parseOrderItemId();
   const score   = Number(scoreEl?.value || 0);
   const content = (contentEl?.value || '').trim();
-  const tags    = selectedOrder.map(n => Number(n)).filter(Number.isFinite); // 선택 순서 그대로
+  const tagIds  = selectedOrder.map(n => Number(n)).filter(Number.isFinite); // 선택 순서 그대로
+  const category = document.querySelector('.summary')?.getAttribute('data-category') ?? null;
 
   // 최소 검증
   if (!orderItemId) { alert('주문 항목 식별자가 없습니다.'); return; }
   if (score <= 0 || score > 5) { alert('별점을 선택해 주세요.'); return; }
+  if (!category) { alert('카테고리 정보를 확인할 수 없습니다.'); return; }
 
-  const payload = { orderItemId, score, content, tags }; // 서버 규격에 맞게 키 이름만 필요시 변경
+  // 서버 규격에 맞게 키 매핑
+  const payload = { orderItemId, score, content, tagIds, category };
 
   try {
     saveBtn.disabled = true;
     const res = await ajax.post('/api/review', payload);
     if (res?.header?.rtcd === 'S00') {
       alert('리뷰가 저장되었습니다.');
-      // 필요 시 이동: location.href = '/review/list';
+      // 필요 시 이동
+      // location.href = '/review/list';
     } else {
       alert(res?.header?.rtmsg || '저장에 실패했습니다.');
     }

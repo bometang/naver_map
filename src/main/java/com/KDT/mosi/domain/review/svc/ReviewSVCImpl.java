@@ -11,6 +11,7 @@ import com.KDT.mosi.web.form.review.TagInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class ReviewSVCImpl implements ReviewSVC{
   );
 
   @Override
-  public Optional<ReviewProduct> summaryFindById(Long orderItemId, Long loginId) {
+  public Optional<ReviewInfo> orderCheck(Long orderItemId, Long loginId) {
     ReviewInfo reviewInfo = findBuyerIdByOrderItemId(orderItemId)
         .orElseThrow(() -> new AccessDeniedException("주문 아이템이 없거나 접근 불가"));
 
@@ -41,6 +42,13 @@ public class ReviewSVCImpl implements ReviewSVC{
     if (!"N".equals(reviewInfo.getReviewed())) {
       throw new AccessDeniedException("이미 작성한 리뷰 입니다.");
     }
+    return Optional.of(reviewInfo);
+  }
+
+  @Override
+  public Optional<ReviewProduct> summaryFindById(Long orderItemId, Long loginId) {
+    ReviewInfo reviewInfo = orderCheck(orderItemId, loginId)
+        .orElseThrow(() -> new AccessDeniedException("주문 검증 실패"));
 
     return reviewDAO.summaryFindById(reviewInfo.getProductId())
         .map(rp -> { rp.setOptionType(reviewInfo.getOptionType()); return rp; });
@@ -78,27 +86,34 @@ public class ReviewSVCImpl implements ReviewSVC{
   }
 
   @Override
-  public Long reviewSave(List<Long> ids, Review review, String category) {
-    // 1) 카테고리별 허용 태그 조회
-    List<TagInfo> allowedTags = reviewDAO.findTagList(category);
+  @Transactional
+  public Long reviewSave(List<Long> ids, Review review) {
+    // 1) 주문 검증 + productId 세팅
+    ReviewInfo reviewInfo = orderCheck(review.getOrderItemId(), review.getBuyerId())
+        .orElseThrow(() -> new AccessDeniedException("주문 검증 실패"));
+    review.setProductId(reviewInfo.getProductId()); // ✅ 필수
 
-    Set<Long> allowedIds = allowedTags.stream()
-        .map(TagInfo::getTagId)
-        .collect(Collectors.toSet());
+    // 2) 카테고리 결정(서버)
+    String category = this.findCategory(review.getOrderItemId())
+        .orElseThrow(() -> new IllegalStateException("상품 카테고리를 찾을 수 없습니다."));
 
-    // 2) 요청된 태그 검증
-    for (Long id : ids) {
+    // 3) 허용 태그 조회 & 검증
+    List<TagInfo> allowedTags = this.findTagList(category);
+    Set<Long> allowedIds = allowedTags.stream().map(TagInfo::getTagId).collect(Collectors.toSet());
+
+    List<Long> safeIds = (ids == null) ? Collections.emptyList() : ids;
+    for (Long id : safeIds) {
       if (!allowedIds.contains(id)) {
         throw new IllegalArgumentException("허용되지 않는 태그입니다. tagId=" + id);
       }
     }
 
-    // 3) 리뷰 저장
+    // 4) 리뷰 저장
     Long reviewId = reviewDAO.saveReview(review);
 
-    // 4) 리뷰-태그 매핑 저장
-    Long sortOrder = 1L;
-    for (Long tagId : ids) {
+    // 5) 리뷰-태그 매핑 저장
+    long sortOrder = 1;
+    for (Long tagId : safeIds) {
       ReviewTag rt = new ReviewTag();
       rt.setReviewId(reviewId);
       rt.setTagId(tagId);
@@ -106,6 +121,18 @@ public class ReviewSVCImpl implements ReviewSVC{
       reviewDAO.saveReviewTag(rt);
     }
 
+    // 6) ORDER_ITEMS.REVIEWED='Y'
+    int updated = reviewDAO.updateReviewed(review.getOrderItemId());
+    if (updated != 1) {
+      throw new IllegalStateException("ORDER_ITEMS 업데이트 실패 (updated=" + updated + ")");
+    }
+
     return reviewId;
+  }
+
+
+  @Override
+  public Optional<String> findCategory(Long orderItemId) {
+    return reviewDAO.findCategory(orderItemId);
   }
 }

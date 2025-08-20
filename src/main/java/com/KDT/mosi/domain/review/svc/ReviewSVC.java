@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewSVC {
+  //구매 확인
+  Optional<ReviewInfo> orderCheck(Long orderItemId, Long loginId);
+
   //상품 요약 정보 확인
   Optional<ReviewProduct> summaryFindById(Long orderItemId, Long loginId);
 
@@ -22,5 +25,8 @@ public interface ReviewSVC {
   boolean categoryFind(String category);
 
   //리뷰 저장
-  Long reviewSave(List<Long> ids, Review review,String category);
+  Long reviewSave(List<Long> ids, Review review);
+
+  //product category 확인
+  Optional<String> findCategory(Long orderItemId);
 }

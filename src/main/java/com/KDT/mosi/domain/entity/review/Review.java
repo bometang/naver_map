@@ -15,13 +15,12 @@ public class Review {
   private Long reviewId;
   private Long productId;
   private Long buyerId;
-  private Long orderId;
+  private Long orderItemId;
   private String content;
   private double score;
   private String sellerRecoYN;
   private String status;
   private Date createDate;
   private Date updateDate;
-
 
 }
