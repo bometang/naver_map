@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,9 +18,9 @@ public class Review {
   private Long orderItemId;
   private String content;
   private double score;
-  private String sellerRecoYN;
+  private String sellerRecoYn;
   private String status;
-  private Date createDate;
-  private Date updateDate;
+  private LocalDateTime createDate;
+  private LocalDateTime updateDate;
 
 }

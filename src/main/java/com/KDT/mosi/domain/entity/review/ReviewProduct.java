@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Getter@Setter
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class ReviewProduct {
   private String nickname;
   private String category;
   private String title;
-  private Date createDate;
+  private LocalDateTime createDate;
   private String mimeType;
   private byte[] imageData;
   private String optionType;

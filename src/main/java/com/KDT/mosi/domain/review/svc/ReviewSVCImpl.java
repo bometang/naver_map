@@ -2,13 +2,11 @@ package com.KDT.mosi.domain.review.svc;
 
 import com.KDT.mosi.domain.common.svc.CodeSVC;
 import com.KDT.mosi.domain.dto.CodeDTO;
-import com.KDT.mosi.domain.entity.review.Review;
-import com.KDT.mosi.domain.entity.review.ReviewInfo;
-import com.KDT.mosi.domain.entity.review.ReviewProduct;
-import com.KDT.mosi.domain.entity.review.ReviewTag;
+import com.KDT.mosi.domain.entity.review.*;
 import com.KDT.mosi.domain.review.dao.ReviewDAO;
 import com.KDT.mosi.web.form.review.TagInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewSVCImpl implements ReviewSVC{
@@ -32,6 +31,18 @@ public class ReviewSVCImpl implements ReviewSVC{
   );
 
   @Override
+  public boolean reviewCheck(Long reviewId, Long loginId) {
+    Long id = findBuyerIdByReviewId(reviewId)
+        .orElseThrow(() -> new AccessDeniedException("리뷰가 없거나 접근 불가"));
+
+    if (!Objects.equals(id, loginId)) {
+      throw new AccessDeniedException("본인 리뷰가 아닙니다.");
+    }
+
+    return true;
+  }
+
+  @Override
   public Optional<ReviewInfo> orderCheck(Long orderItemId, Long loginId) {
     ReviewInfo reviewInfo = findBuyerIdByOrderItemId(orderItemId)
         .orElseThrow(() -> new AccessDeniedException("주문 아이템이 없거나 접근 불가"));
@@ -39,6 +50,7 @@ public class ReviewSVCImpl implements ReviewSVC{
     if (!Objects.equals(reviewInfo.getBuyerId(), loginId)) {
       throw new AccessDeniedException("본인 주문이 아닙니다.");
     }
+    log.info("Reviewed={}",reviewInfo.getReviewed());
     if (!"N".equals(reviewInfo.getReviewed())) {
       throw new AccessDeniedException("이미 작성한 리뷰 입니다.");
     }
@@ -83,6 +95,11 @@ public class ReviewSVCImpl implements ReviewSVC{
 
     return list != null && list.stream()
         .anyMatch(c -> codeId.equalsIgnoreCase(c.getCodeId()));
+  }
+
+  @Override
+  public Optional<Long> findBuyerIdByReviewId(Long id) {
+    return reviewDAO.findBuyerIdByReviewId(id);
   }
 
   @Override
@@ -134,5 +151,33 @@ public class ReviewSVCImpl implements ReviewSVC{
   @Override
   public Optional<String> findCategory(Long orderItemId) {
     return reviewDAO.findCategory(orderItemId);
+  }
+
+  @Override
+  public List<ReviewList> reviewFindAll(Long buyerId, int pageNo, int numOfRows) {
+    return reviewDAO.reviewFindAll(buyerId, pageNo, numOfRows);
+  }
+
+  @Override
+  public List<ReviewList> reviewFindAllSeller(Long sellerId, int pageNo, int numOfRows) {
+    return reviewDAO.reviewFindAllSeller(sellerId, pageNo, numOfRows);
+  }
+
+  @Override
+  public Long getReviewTotalCount(Long buyerId) {
+    return reviewDAO.getReviewTotalCount(buyerId);
+  }
+
+  @Override
+  public Long getSellerReviewTotalCount(Long memberId) {
+    return reviewDAO.getSellerReviewTotalCount(memberId);
+  }
+
+  @Override
+  public int deleteByIds(Long id, Long loginId) {
+    this.reviewCheck(id,loginId);
+    int cnt = reviewDAO.deleteByIds(id);      // 실삭제
+    if (cnt == 0) throw new IllegalStateException("이미 삭제되었거나 존재하지 않습니다.");
+    return cnt;
   }
 }

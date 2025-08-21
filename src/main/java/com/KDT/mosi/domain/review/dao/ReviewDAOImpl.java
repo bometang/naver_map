@@ -1,9 +1,6 @@
 package com.KDT.mosi.domain.review.dao;
 
-import com.KDT.mosi.domain.entity.review.Review;
-import com.KDT.mosi.domain.entity.review.ReviewInfo;
-import com.KDT.mosi.domain.entity.review.ReviewProduct;
-import com.KDT.mosi.domain.entity.review.ReviewTag;
+import com.KDT.mosi.domain.entity.review.*;
 import com.KDT.mosi.web.form.review.TagInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +28,14 @@ public class ReviewDAOImpl implements ReviewDAO{
   public Optional<ReviewProduct> summaryFindById(Long id) {
 
     StringBuffer sql = new StringBuffer();
-    sql.append("SELECT p.product_id AS product_id,category,title,p.create_DATE AS create_date,nickname,mime_Type,image_data  ");
+    sql.append("SELECT p.product_id AS product_id,p.category AS category,p.title AS title,p.create_date AS create_date,sp.nickname AS nickname,i.mime_type AS MIME_TYPE,i.image_data AS image_data  ");
     sql.append("FROM product p ");
     sql.append("LEFT JOIN product_image i ");
     sql.append("  ON p.PRODUCT_ID = i.PRODUCT_ID ");
     sql.append(" AND i.image_order = ( ");
     sql.append("       SELECT MIN(pi.image_order) FROM product_image pi WHERE pi.product_id = p.product_id ");
     sql.append("     ) ");
-    sql.append("LEFT JOIN MEMBER m ON p.MEMBER_ID = m.MEMBER_ID ");
+    sql.append("LEFT JOIN seller_page sp ON sp.member_id = p.member_id ");
     sql.append("WHERE p.product_ID = :productId ");;
 
     SqlParameterSource param = new MapSqlParameterSource().addValue("productId",id);
@@ -90,6 +87,18 @@ public class ReviewDAOImpl implements ReviewDAO{
     List<TagInfo> list = template.query(sql.toString(), param, BeanPropertyRowMapper.newInstance(TagInfo.class));
 
     return list;
+  }
+
+  @Override
+  public Optional<Long> findBuyerIdByReviewId(Long id) {
+    String sql = "SELECT BUYER_ID FROM REVIEW WHERE REVIEW_ID = :id";
+    SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+    try {
+      Long buyerId = template.queryForObject(sql, param, Long.class);
+      return Optional.ofNullable(buyerId);
+    } catch (EmptyResultDataAccessException e) {
+      return Optional.empty(); // 해당 리뷰 없음
+    }
   }
 
   @Override
@@ -161,25 +170,131 @@ public class ReviewDAOImpl implements ReviewDAO{
   }
 
   @Override
-  public List<Review> reviewFindAll(Long buyerId, int pageNo, int numOfRows) {
+  public List<ReviewList> reviewFindAll(Long buyerId, int pageNo, int numOfRows) {
     StringBuffer sql = new StringBuffer();
-    sql.append("SELECT REVIEW_ID, PRODUCT_ID, BUYER_ID, ORDER_ITEM_ID,CONTENT, SCORE, SELLER_RECOYN, STATUS, CREATE_DATE, UPDATE_DATE ");
-    sql.append("FROM review ");
-    sql.append("WHERE buyer_id= :buyerId ");
-    sql.append("ORDER BY create_date DESC ");
-    sql.append("  OFFSET (:pageNo -1) * :numOfRows ROWS ");
+    sql.append("SELECT ");
+    sql.append("r.review_id,r.content,r.score,r.seller_recoyn AS seller_reco_yn,r.create_date AS rcreate,r.update_date AS rupdate, ");
+    sql.append("p.title AS title,p.create_date AS pcreate,p.update_date AS pupdate, ");
+    sql.append("oi.option_type AS option_type, ");
+    sql.append("tags.tag_ids,tags.tag_labels, ");
+    sql.append("i.image_id AS product_image_id,i.mime_type AS product_image_mime " );
+    sql.append("FROM review r ");
+    sql.append("LEFT JOIN product p ");
+    sql.append("ON p.product_id = r.product_id ");
+    sql.append("LEFT JOIN order_items oi ");
+    sql.append("ON oi.order_item_id = r.order_item_id ");
+    sql.append("LEFT JOIN ( ");
+    sql.append("    SELECT ");
+    sql.append("rt.review_id, ");
+    sql.append("    LISTAGG(t.tag_id, ',')      WITHIN GROUP (ORDER BY rt.sort_order, t.tag_id) AS tag_ids, ");
+    sql.append("LISTAGG(t.label, ' | ')     WITHIN GROUP (ORDER BY rt.sort_order, t.tag_id) AS tag_labels ");
+    sql.append("FROM review_tag rt ");
+    sql.append("JOIN tag t ON t.tag_id = rt.tag_id ");
+    sql.append("GROUP BY rt.review_id ");
+    sql.append(") tags ");
+    sql.append("ON tags.review_id = r.review_id ");
+    sql.append("LEFT JOIN ( ");
+    sql.append("SELECT product_id, image_id, mime_type ");
+    sql.append("FROM ( ");
+    sql.append("SELECT pi.*, ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY image_order, image_id) rn ");
+    sql.append("FROM product_image pi ");
+    sql.append(") WHERE rn = 1 ) i ON i.product_id = r.product_id ");
+    sql.append("WHERE r.buyer_id = :buyerId ");
+    sql.append("ORDER BY r.create_date DESC ");
+    sql.append("OFFSET (:pageNo - 1) * :numOfRows ROWS ");
     sql.append("FETCH NEXT :numOfRows ROWS ONLY ");
 
     Map<String,Object> map = Map.of("buyerId",buyerId,"pageNo", pageNo, "numOfRows", numOfRows);
 
     //db요청
-    List<Review> list = template.query(sql.toString(),map, BeanPropertyRowMapper.newInstance(Review.class));
+    List<ReviewList> list = template.query(sql.toString(),map, BeanPropertyRowMapper.newInstance(ReviewList.class));
+
+    return list;
+  }
+
+
+  @Override
+  public List<ReviewList> reviewFindAllSeller(Long sellerId, int pageNo, int numOfRows) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("SELECT ");
+    sql.append("r.review_id,r.content,r.score,r.seller_recoyn AS seller_reco_yn,r.create_date AS rcreate,r.update_date AS rupdate, ");
+    sql.append("p.title AS title,p.create_date AS pcreate,p.update_date AS pupdate, ");
+    sql.append("oi.option_type AS option_type, ");
+    sql.append("tags.tag_ids,tags.tag_labels, ");
+    sql.append("i.image_id AS product_image_id,i.mime_type AS product_image_mime, " );
+    sql.append("m.NICKNAME AS nickname " );
+    sql.append("FROM review r ");
+    sql.append("LEFT JOIN product p ");
+    sql.append("ON p.product_id = r.product_id ");
+    sql.append("LEFT JOIN order_items oi ");
+    sql.append("ON oi.order_item_id = r.order_item_id ");
+    sql.append("LEFT JOIN member m ON m.member_id = r.buyer_id ");
+    sql.append("LEFT JOIN ( ");
+    sql.append("    SELECT ");
+    sql.append("rt.review_id, ");
+    sql.append("    LISTAGG(t.tag_id, ',')      WITHIN GROUP (ORDER BY rt.sort_order, t.tag_id) AS tag_ids, ");
+    sql.append("LISTAGG(t.label, ' | ')     WITHIN GROUP (ORDER BY rt.sort_order, t.tag_id) AS tag_labels ");
+    sql.append("FROM review_tag rt ");
+    sql.append("JOIN tag t ON t.tag_id = rt.tag_id ");
+    sql.append("GROUP BY rt.review_id ");
+    sql.append(") tags ");
+    sql.append("ON tags.review_id = r.review_id ");
+    sql.append("LEFT JOIN ( ");
+    sql.append("SELECT product_id, image_id, mime_type ");
+    sql.append("FROM ( ");
+    sql.append("SELECT pi.*, ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY image_order, image_id) rn ");
+    sql.append("FROM product_image pi ");
+    sql.append(") WHERE rn = 1 ) i ON i.product_id = r.product_id ");
+    sql.append("WHERE p.member_id = :sellerId ");
+    sql.append("ORDER BY r.create_date DESC ");
+    sql.append("OFFSET (:pageNo - 1) * :numOfRows ROWS ");
+    sql.append("FETCH NEXT :numOfRows ROWS ONLY ");
+
+    Map<String,Object> map = Map.of("sellerId",sellerId,"pageNo", pageNo, "numOfRows", numOfRows);
+
+    //db요청
+    List<ReviewList> list = template.query(sql.toString(),map, BeanPropertyRowMapper.newInstance(ReviewList.class));
 
     return list;
   }
 
   @Override
-  public int getReviewTotalCount() {
-    return 0;
+  public Long getReviewTotalCount(Long buyerId) {
+    String sql = "SELECT count(review_id) FROM review WHERE buyer_id =:buyerId ";
+
+    SqlParameterSource param = new MapSqlParameterSource().addValue("buyerId", buyerId);
+    Long i = template.queryForObject(sql, param, Long.class);
+
+    return i;
+  }
+
+  @Override
+  public Long getSellerReviewTotalCount(Long memberId) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("SELECT count(review_id) ");
+    sql.append("FROM review r ");
+    sql.append("LEFT JOIN product p ");
+    sql.append("ON p.product_id=r.PRODUCT_ID ");
+    sql.append("WHERE p.member_id = :memberId ");
+
+    SqlParameterSource param = new MapSqlParameterSource().addValue("memberId", memberId);
+    Long i = template.queryForObject(sql.toString(), param, Long.class);
+
+    return i;
+  }
+
+  @Override
+  public int deleteByIds(Long id) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("DELETE ");
+    sql.append("FROM review ");
+    sql.append(" WHERE review_id = :id ");
+
+    //수동매핑
+    SqlParameterSource param = new MapSqlParameterSource().addValue("id",id);
+
+    int rows = template.update(sql.toString(), param);
+
+    return rows;
   }
 }
