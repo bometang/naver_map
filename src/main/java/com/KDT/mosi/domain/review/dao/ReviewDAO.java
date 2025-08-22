@@ -45,6 +45,7 @@ public interface ReviewDAO {
 
   //판매자 리뷰 전체 갯수
   Long getSellerReviewTotalCount(Long memberId);
+
   //리뷰 삭제
   int deleteByIds(Long id);
 }

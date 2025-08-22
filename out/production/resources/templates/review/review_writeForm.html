@@ -6,9 +6,9 @@
   <title>리뷰</title>
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <link rel="stylesheet" th:href="@{/css/common.css}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.8/dist/web/static/pretendard.css">
-
+  <link rel="stylesheet" th:href="@{/css/buyerpage/buyerMypageHome.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" th:href="@{/css/review/reviewWrite.css}">
 
 </head>
@@ -20,6 +20,7 @@
   <div class="page-container">
     <main class="mypage-container">
       <aside class="sidebar"></aside>
+
       <section class="content review">
         <h1 class="title">리뷰 작성</h1>
 
@@ -38,18 +39,25 @@
             <div class="product-title" th:text="${reviewProduct.title}">상품 제목</div>
 
             <div class="option">
-              <span class="label">옵션:</span>
+              <span class="label">옵션</span>
               <span class="value" th:text="${reviewProduct.optionType}">옵션</span>
             </div>
 
             <div class="meta">
-              <div class="date" th:text="${reviewProduct.createDate}">등록일</div>
-              <div class="nickname" th:text="${reviewProduct.nickname}">판매자 닉네임</div>
+              <div class="date">
+                <span>상품등록일 :</span>
+                <span th:text="${reviewProduct.createDate}">2025.08.19</span>
+              </div>
+              <div class="nickname">
+                <span>판매자 : </span>
+                <span th:text="${reviewProduct.nickname}">판매자</span>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="rating-precise" id="ratingPrecise">
+          <div class="star-title">별점</div>
           <div class="stars-wrap">
             <div class="stars"></div>
           </div>
@@ -57,17 +65,18 @@
           <output id="scoreText">0.0</output>
         </div>
         <div class="review-tags" id="reviewTags">
-          <h2 class="subtitle">태그 선택</h2>
+          <div class="subtitle">태그</div>
           <div class="tag-list">
           </div>
           <input type="hidden" name="selectedTags" id="selectedTags" value="">
         </div>
         <div class="review-content">
           <label for="content">리뷰 내용</label>
-          <textarea id="content" name="content" rows="6" placeholder="리뷰를 입력하세요"></textarea>
+          <textarea id="content" name="content" rows="15" placeholder="클릭하여 후기를 작성해 주세요."></textarea>
         </div>
         <div class="actions">
-          <button type="button" id="saveBtn" class="btn btn--primary">저장</button>
+          <button type="button" id="saveBtn" class="btnSave">저장</button>
+          <button type="button" id="cancelBtn" class="btnCancel">취소</button>
         </div>
       </section>
     </main>

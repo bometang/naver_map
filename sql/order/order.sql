@@ -68,60 +68,24 @@ VALUES (ORDERS_SEQ.NEXTVAL, 'MOSI-20250818-003', 5, 89000);
 
 -- 주문 MOSI-20250818-001 (TOTAL=55,000) → 아이템 1개
 INSERT INTO ORDER_ITEMS (ORDER_ITEM_ID,ORDER_ID, PRODUCT_ID, SELLER_ID, QUANTITY, ORIGINAL_PRICE, SALE_PRICE,request, OPTION_TYPE)
-VALUES (
-  ORDER_ITEMS_SEQ.NEXTVAL,
-  (SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-001'),
-  1,
-  6,
-  1, 55000, 55000,'안전 여행', '기본코스'
-);
+VALUES (ORDER_ITEMS_SEQ.NEXTVAL,(SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-001'),1,6,1, 55000, 55000,'안전 여행', '기본코스');
 
 -- 주문 MOSI-20250818-002 (TOTAL=120,000) → 아이템 3개
 INSERT INTO ORDER_ITEMS (ORDER_ITEM_ID,ORDER_ID, PRODUCT_ID, SELLER_ID, QUANTITY, ORIGINAL_PRICE, SALE_PRICE,request,  OPTION_TYPE)
-VALUES (
-  ORDER_ITEMS_SEQ.NEXTVAL,
-  (SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-002'),
-  1,
- 6,
-  1, 40000, 40000,'스릴 만점', '기본코스'
-);
+VALUES (ORDER_ITEMS_SEQ.NEXTVAL,(SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-002'),1,6,1, 40000, 40000,'스릴 만점', '기본코스');
 
 INSERT INTO ORDER_ITEMS (ORDER_ITEM_ID,ORDER_ID, PRODUCT_ID, SELLER_ID, QUANTITY, ORIGINAL_PRICE, SALE_PRICE,request,  OPTION_TYPE)
-VALUES (
-  ORDER_ITEMS_SEQ.NEXTVAL,
-  (SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-002'),
-  1,
-  6,
-  2, 20000, 20000,'미슐랭', '가이드포함'
-);
+VALUES (ORDER_ITEMS_SEQ.NEXTVAL,(SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-002'),1,6,2, 20000, 20000,'미슐랭', '가이드포함');
 
 INSERT INTO ORDER_ITEMS (ORDER_ITEM_ID,ORDER_ID, PRODUCT_ID, SELLER_ID, QUANTITY, ORIGINAL_PRICE, SALE_PRICE,request,  OPTION_TYPE)
-VALUES (
-  ORDER_ITEMS_SEQ.NEXTVAL,
-  (SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-002'),
-  1,
-  6,
-  4, 10000, 10000,'놀이공원', '기본코스'
-);
+VALUES (ORDER_ITEMS_SEQ.NEXTVAL,(SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-002'),1,6,4, 10000, 10000,'놀이공원', '기본코스');
 
 -- 주문 MOSI-20250818-003 (TOTAL=89,000) → 아이템 2개
 INSERT INTO ORDER_ITEMS (ORDER_ITEM_ID,ORDER_ID, PRODUCT_ID, SELLER_ID, QUANTITY, ORIGINAL_PRICE, SALE_PRICE,request,  OPTION_TYPE)
-VALUES (
-  ORDER_ITEMS_SEQ.NEXTVAL,
-  (SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-003'),
-  1,
-  6,
-  1, 49000, 49000,'대리만족', '가이드포함'
-);
+VALUES (ORDER_ITEMS_SEQ.NEXTVAL,(SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-003'),1,6,1, 49000, 49000,'대리만족', '가이드포함');
 
 INSERT INTO ORDER_ITEMS (ORDER_ITEM_ID,ORDER_ID, PRODUCT_ID, SELLER_ID, QUANTITY, ORIGINAL_PRICE, SALE_PRICE,request,  OPTION_TYPE)
-VALUES (
-  ORDER_ITEMS_SEQ.NEXTVAL,
-  (SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-003'),
-  1,
-  6,
-  2, 20000, 20000,'분위기', '기본코스'
-);
+VALUES (ORDER_ITEMS_SEQ.NEXTVAL,(SELECT ORDER_ID FROM ORDERS WHERE ORDER_CODE='MOSI-20250818-003'),1,6,2, 20000, 20000,'분위기', '기본코스');
 ---------------------------------------------------------------------------------------------------------------
 
 
@@ -202,101 +166,101 @@ CREATE TABLE REVIEW_REPORT (
 
 /* ===================== B0101 지역 ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
-VALUES (TAG_SEQ.NEXTVAL, '역세권',           'near-subway',        'B0101', 'N', 'Y', 'N');
+VALUES (TAG_SEQ.NEXTVAL, '#역세권_핫플',   'near-subway',        'B0101', 'N', 'Y', 'N');
 INSERT INTO TAG  (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
-VALUES (TAG_SEQ.NEXTVAL, '바다 근처',        'seaside-area',       'B0101', 'N', 'Y', 'N');
+VALUES (TAG_SEQ.NEXTVAL, '#시원한_바다_뷰', 'seaside-area',       'B0101', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '산 근처',          'mountain-area',      'B0101', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#산자락_힐링스폿',   'mountain-area',      'B0101', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '시장 인접',        'market-area',        'B0101', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#시장_골목투어',   'market-area',        'B0101', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '공원 인접',        'park-adjacent',      'B0101', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#공원_피크닉존',   'park-adjacent',      'B0101', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '도심',            'downtown',           'B0101', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#도심_핫플',     'downtown',           'B0101', 'N', 'Y', 'N');
 
 /* ===================== B0102 반려동물 ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '강아지 출입 가능', 'pet-dogs-allowed',   'B0102', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#강아지_출입_가능', 'pet-dogs-allowed',   'B0102', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '고양이 출입 가능', 'pet-cats-allowed',   'B0102', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#고양이_출입_가능', 'pet-cats-allowed',   'B0102', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '대형견 가능',      'large-dogs-ok',      'B0102', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#대형견_OK',      'large-dogs-ok',      'B0102', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '반려동물 전용 좌석','pet-seating',       'B0102', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#펫전용_좌석',   'pet-seating',       'B0102', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '반려동물 동반 숙박','pet-friendly-stay', 'B0102', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#펫프렌들리',    'pet-friendly-stay', 'B0102', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '펫키트 제공',      'pet-kit-provided',   'B0102', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#펫키트_무료제공',   'pet-kit-provided',   'B0102', 'N', 'Y', 'N');
 
 /* ===================== B0103 맛집 ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '매운맛',          'spicy',              'B0103', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#매운맛_끝판왕',      'spicy',              'B0103', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '고기 맛집',        'meat-restaurant',    'B0103', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#고기_푸짐맛집',     'meat-restaurant',    'B0103', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '해산물',          'seafood',            'B0103', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#신선한_해산물', 'seafood',            'B0103', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '디저트 좋음',      'dessert-good',       'B0103', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#달달한_디저트',   'dessert-good',       'B0103', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '가성비 좋음',      'value-for-money',    'B0103', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#가성비_최강맛집',     'value-for-money',    'B0103', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '예약 필수',        'reservation-required','B0103','N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#예약_없으면_힘듦',     'reservation-required','B0103','N', 'Y', 'N');
 
 /* ===================== B0104 문화/역사 ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '전시/갤러리',      'exhibition',         'B0104', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#갤러리_투어',   'exhibition',         'B0104', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '박물관',          'museum',             'B0104', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#재밌는_박물관',   'museum',             'B0104', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '사적지',          'heritage-site',      'B0104', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#역사_탐방코스',          'heritage-site',      'B0104', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '전통시장',        'traditional-market', 'B0104', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#전통시장_먹거리',        'traditional-market', 'B0104', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '해설 투어',        'guided-tour',        'B0104', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#전문가_해설투어',        'guided-tour',        'B0104', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '야간 개장',        'night-opening',      'B0104', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#밤에도_열려요',        'night-opening',      'B0104', 'N', 'Y', 'N');
 
 /* ===================== B0105 계절/자연 ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '벚꽃 명소',       'cherry-blossom',     'B0105', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#봄_벚꽃명소',       'cherry-blossom',     'B0105', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '단풍 명소',       'autumn-foliage',     'B0105', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#가을_단풍스폿',       'autumn-foliage',     'B0105', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '해변',            'beach',              'B0105', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#여름_힐링해변',            'beach',              'B0105', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '산책로',          'walking-trail',      'B0105', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#한적한_산책길',          'walking-trail',      'B0105', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '야경 명소',       'night-view',         'B0105', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#야경_포인트',       'night-view',         'B0105', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '피크닉 스폿',     'picnic-spot',        'B0105', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#피크닉_추천지',     'picnic-spot',        'B0105', 'N', 'Y', 'N');
 
 /* ===================== B0106 실버/교통약자 ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '휠체어 접근 가능', 'wheelchair-accessible','B0106','N','Y','N');
+ VALUES (TAG_SEQ.NEXTVAL, '#휠체어_편리', 'wheelchair-accessible','B0106','N','Y','N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '장애인 화장실',    'accessible-restroom','B0106', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#장애인_화장실',    'accessible-restroom','B0106', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '점자 안내',        'braille-guide',      'B0106', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#점자안내_있음',        'braille-guide',      'B0106', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '엘리베이터',      'elevator',           'B0106', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#엘리베이터_완비',      'elevator',           'B0106', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '경사로',          'ramp',               'B0106', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#편한_경사로',          'ramp',               'B0106', 'N', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '저상버스 접근',    'low-floor-bus',      'B0106', 'N', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#저상버스_운행',    'low-floor-bus',      'B0106', 'N', 'Y', 'N');
 
 /* ===================== 공용(공통) 태그 — TCATEGORY='B01' ===================== */
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '야간 영업',        'open-late',null,  'Y', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#알찬여행구성','well-planned-trip',null,  'Y', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '가족 친화적',      'family-friendly',null,  'Y', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#트렌디해요','trendy',null,  'Y', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '조용한 분위기',    'quiet-atmosphere',null,  'Y', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#가이드가_친절해요','kind-guide',null,  'Y', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '포토 스폿',        'photo-spot',null,  'Y', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#비싼만큼_가치가있어요',        'worth-it',null,  'Y', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '현금만 가능',      'cash-only',null,  'Y', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#숙소가_좋았어요',      'good-stay',null,  'Y', 'Y', 'N');
 INSERT INTO TAG (TAG_ID, LABEL, SLUG, TCATEGORY, COMMONYN, USEYN, RECOYN)
- VALUES (TAG_SEQ.NEXTVAL, '주차 가능',        'parking-available',null,  'Y', 'Y', 'N');
+ VALUES (TAG_SEQ.NEXTVAL, '#가성비_좋아요',        'value-good',null,  'Y', 'Y', 'N');
 
 
 

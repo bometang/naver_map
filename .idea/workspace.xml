@@ -5,37 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fc470a1-286f-4360-ab34-5292c3cb0de6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/review/ReviewList.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/review/review_list.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/review/write.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/img/review/write/small-fill.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/img/review/write/small-line.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/review/Review.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/review/Review.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/review/ReviewProduct.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/entity/review/ReviewProduct.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/dao/ReviewDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/dao/ReviewDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/dao/ReviewDAOImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/dao/ReviewDAOImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/svc/ReviewSVC.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/svc/ReviewSVC.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/svc/ReviewSVCImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/domain/review/svc/ReviewSVCImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/review/ApiReviewController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/review/ApiReviewController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/review/CsrApiReviewController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/controller/review/CsrApiReviewController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/KDT/mosi/web/form/review/ReviewTag.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/static/css/common.css" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/static/css/common.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/static/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/static/css/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/static/css/layout.css" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/static/css/layout.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/bbs/new.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sql/bbs/new.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/static/css/review/reviewWrite.css" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/static/css/review/reviewWrite.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/static/js/review/reviewWrite.js" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/static/js/review/reviewWrite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/review/review_writeForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/review/review_writeForm.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sql/order/order.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sql/order/order.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/review/Review.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/review/Review.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/review/ReviewProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/entity/review/ReviewProduct.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/dao/ReviewDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/dao/ReviewDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/dao/ReviewDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/dao/ReviewDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/svc/ReviewSVC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/svc/ReviewSVC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/svc/ReviewSVCImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/domain/review/svc/ReviewSVCImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/review/ApiReviewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/review/ApiReviewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/review/CsrApiReviewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/review/CsrApiReviewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/common.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/common.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/layout.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/layout.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/review/reviewWrite.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/review/reviewWrite.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/review/reviewWrite.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/review/reviewWrite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/review/review_writeForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/review/review_writeForm.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,22 +54,22 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.MosiApplication.executor": "Run",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "JUnit.MosiApplicationTests.testUpdateStepAndShift.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/KDT/projects/memem/src/main/resources/static/css",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "File.Encoding"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.MosiApplication.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;JUnit.MosiApplicationTests.testUpdateStepAndShift.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/KDT/projects/memem/src/main/resources/static/css&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\KDT\projects\memem\src\main\resources\static\css" />
@@ -99,11 +79,11 @@
       <recent name="C:\KDT\projects\memem\src\main\java\com\KDT\mosi\web\controller" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\KDT\projects\memem\src\main\resources\static\img\review\write" />
       <recent name="C:\KDT\projects\naver_map\src\main\resources\static\img\review\product" />
       <recent name="C:\KDT\projects\naver_map\src\main\resources\static\img\bbs\bbs_list" />
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\templates\postBoards\old2" />
       <recent name="C:\KDT\projects\EXBbs\src\main\resources\static\css\community\old2" />
-      <recent name="C:\KDT\projects\EXBbs\src\main\resources\static\js\community\bbs\csr\old" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.KDT.mosi.domain.entity.map.kakaoMap" />

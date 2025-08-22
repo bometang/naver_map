@@ -9,6 +9,7 @@ const selectedTagsInput = document.getElementById('selectedTags');
 const saveBtn   = document.getElementById('saveBtn');
 const scoreEl   = document.getElementById('score');     // hidden (별점)
 const contentEl = document.getElementById('content');   // textarea
+const cancelBtn  = document.getElementById('btnCancel');
 
 try {
   if (product_category) {
@@ -96,4 +97,17 @@ saveBtn?.addEventListener('click', async () => {
   } finally {
     saveBtn.disabled = false;
   }
+});
+  document.addEventListener('DOMContentLoaded', () => {
+  const textarea = document.getElementById('content');
+  if (!textarea) return;   // 안전장치
+
+  const handleResizeHeight = () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  };
+
+  // 로드시, 입력시 자동 리사이즈
+  handleResizeHeight();
+  textarea.addEventListener('input', handleResizeHeight);
 });
