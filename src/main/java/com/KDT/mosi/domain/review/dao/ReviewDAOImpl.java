@@ -217,7 +217,7 @@ public class ReviewDAOImpl implements ReviewDAO{
   public List<ReviewList> reviewFindAllSeller(Long sellerId, int pageNo, int numOfRows) {
     StringBuffer sql = new StringBuffer();
     sql.append("SELECT ");
-    sql.append("r.review_id,r.content,r.score,r.seller_recoyn AS seller_reco_yn,r.create_date AS rcreate,r.update_date AS rupdate, ");
+    sql.append("r.review_id as review_id,r.content as content,r.score,r.seller_recoyn AS seller_reco_yn,r.create_date AS rcreate,r.update_date AS rupdate, ");
     sql.append("p.title AS title,p.create_date AS pcreate,p.update_date AS pupdate, ");
     sql.append("oi.option_type AS option_type, ");
     sql.append("tags.tag_ids,tags.tag_labels, ");

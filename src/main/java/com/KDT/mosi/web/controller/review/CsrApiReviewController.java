@@ -53,25 +53,36 @@ public class CsrApiReviewController {
 //    return "review/write";
   }
 
-  @GetMapping("/list")
-  public String reviewListBuyer(
-      @RequestParam(name = "pageNo", required = false) Integer pageNo,
-      @RequestParam(name = "numOfRows", required = false) Integer numOfRows,
+//  @GetMapping("/list")
+//  public String reviewListBuyer(
+//      @RequestParam(name = "pageNo", required = false) Integer pageNo,
+//      @RequestParam(name = "numOfRows", required = false) Integer numOfRows,
+//      @AuthenticationPrincipal CustomUserDetails user,
+//      Model model
+//  ) {
+//    if (user == null) return "redirect:/login";
+//    int p = (pageNo == null) ? 1 : pageNo;
+//    int r = (numOfRows == null) ? 5 : numOfRows;
+//
+//    // 쿼리 없으면 주소창에 기본값 고정
+//    if (pageNo == null || numOfRows == null) {
+//      return "redirect:/review/list?pageNo=" + p + "&numOfRows=" + r;
+//    }
+//
+//    model.addAttribute("mode", "buyer");     // 프런트에서 /api/review/paging/buyer 호출
+//    model.addAttribute("pageNo", p);
+//    model.addAttribute("numOfRows", r);
+//    return "review/review_list";             // 목록 뷰 (앞서 만든 HTML 템플릿)
+//  }
+
+  @GetMapping("/seller")
+  public String reviewListSeller(
       @AuthenticationPrincipal CustomUserDetails user,
       Model model
   ) {
     if (user == null) return "redirect:/login";
-    int p = (pageNo == null) ? 1 : pageNo;
-    int r = (numOfRows == null) ? 5 : numOfRows;
 
-    // 쿼리 없으면 주소창에 기본값 고정
-    if (pageNo == null || numOfRows == null) {
-      return "redirect:/review/list?pageNo=" + p + "&numOfRows=" + r;
-    }
-
-    model.addAttribute("mode", "buyer");     // 프런트에서 /api/review/paging/buyer 호출
-    model.addAttribute("pageNo", p);
-    model.addAttribute("numOfRows", r);
-    return "review/review_list";             // 목록 뷰 (앞서 만든 HTML 템플릿)
+    return "review/seller_review_list";             // 목록 뷰 (앞서 만든 HTML 템플릿)
   }
+
 }
