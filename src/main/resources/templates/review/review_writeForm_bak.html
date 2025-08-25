@@ -10,22 +10,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" th:href="@{/css/review/reviewWrite.css}">
-
 </head>
 <body>
 <div class="layout-wrapper">
-
-  <!-- 헤더 -->
-
   <div class="page-container">
     <main class="mypage-container">
       <aside class="sidebar"></aside>
 
+      <!-- 섹션 루트에 모드/ID 데이터 부여: JS가 이걸로 분기 -->
       <section class="content review"
                th:with="isEdit=${review != null}"
                th:attr="data-mode=${isEdit} ? 'edit' : 'add',
-                  data-review-id=${isEdit} ? ${review.reviewId} : '',
-                  data-product-id=${reviewProduct != null} ? ${reviewProduct.productId} : ''">
+                        data-review-id=${isEdit} ? ${review.reviewId} : '',
+                        data-order-item-id=${reviewProduct != null} ? ${reviewProduct.orderItemId} : ''">
+
         <h1 class="title" th:text="${isEdit} ? '리뷰 수정' : '리뷰 작성'">리뷰 작성</h1>
 
         <!-- 데이터 없을 때 -->
@@ -34,7 +32,9 @@
         </div>
 
         <!-- 요약 영역 -->
-        <div class="summary"  th:if="${reviewProduct != null}" th:data-category="${reviewProduct.category}">
+        <div class="summary"
+             th:if="${reviewProduct != null}"
+             th:data-category="${reviewProduct.category}">
           <div class="image">
             <img th:if="${imageSrc}" th:src="${imageSrc}" alt="상품 이미지">
           </div>
@@ -60,34 +60,44 @@
           </div>
         </div>
 
+        <!-- form 제출을 안 쓰고 AJAX면 hidden만 유지, 서버 submit이면 form으로 감싸도 OK -->
+        <input type="hidden" id="reviewId" name="reviewId" th:value="${review?.reviewId}">
+        <input type="hidden" id="orderItemId" name="orderItemId" th:value="${reviewProduct?.orderItemId}">
+
+        <!-- 별점 -->
         <div class="rating-precise" id="ratingPrecise">
-          <input type="hidden" id="reviewId" name="reviewId" th:value="${review?.reviewId}">
-          <input type="hidden" id="productId" name="productId" th:value="${reviewProduct?.productId}">
           <div class="star-title">별점</div>
-          <div class="stars-wrap">
-            <div class="stars"></div>
-          </div>
+          <div class="stars-wrap"><div class="stars"></div></div>
+
+          <!-- 수정 모드면 초기값 채움 -->
           <input type="hidden" name="score" id="score"
                  th:value="${review != null} ? ${review.score} : 0">
           <output id="scoreText"
-                  th:text="${review != null} ? ${#numbers.formatDecimal(review.score,1,1)} : '0.0'">0.0</output>
+                  th:text="${review != null} ? ${#numbers.formatDecimal(review.score, 1, 1)} : '0.0'">0.0</output>
         </div>
+
+        <!-- 태그 -->
         <div class="review-tags" id="reviewTags">
           <div class="subtitle">태그</div>
-          <div class="tag-list">
-          </div>
+          <div class="tag-list"><!-- JS가 목록 렌더링 --></div>
+
+          <!-- 수정 모드면 선택된 태그 id들을 콤마로 전달 (예: '3,6,10') -->
           <input type="hidden" name="selectedTags" id="selectedTags"
-                 th:value="${review != null} ? ${review.ids} : ''">
+                 th:value="${review != null} ? ${review.selectedTagIdsCsv} : ''">
         </div>
+
+        <!-- 내용 -->
         <div class="review-content">
           <label for="content">리뷰 내용</label>
           <textarea id="content" name="content" rows="15"
                     placeholder="클릭하여 후기를 작성해 주세요."
                     th:text="${review != null} ? ${review.content} : ''"></textarea>
         </div>
+
         <div class="actions">
+          <!-- 저장 버튼의 라벨도 모드에 따라 -->
           <button type="button" id="saveBtn" class="btnSave"
-                  th:text="${review != null} ? '수정' : '저장'">저장</button>
+                  th:text="${isEdit} ? '수정 저장' : '저장'">저장</button>
           <button type="button" id="cancelBtn" class="btnCancel">취소</button>
         </div>
       </section>
@@ -95,6 +105,10 @@
   </div>
 </div>
 </body>
+
+<!-- 별점 컴포넌트 -->
 <script src="/js/review/rating-precise.js" defer></script>
+
+<!-- 모듈 JS: data-mode가 'add'면 /review/save, 'edit'면 /review/update 로 AJAX 전송 -->
 <script src="/js/review/reviewWrite.js" type="module" defer></script>
 </html>

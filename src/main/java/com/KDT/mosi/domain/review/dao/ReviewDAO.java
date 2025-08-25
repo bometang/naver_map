@@ -48,4 +48,10 @@ public interface ReviewDAO {
 
   //리뷰 삭제
   int deleteByIds(Long id);
+
+  //리뷰 수정 정보
+  Optional<ReviewEdit> findReviewId (Long id);
+
+  //리뷰 수정 저장
+  Long reviewEditUpdate(Long reviewId, double rating, List<Long> ids, String content);
 }

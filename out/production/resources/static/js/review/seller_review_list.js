@@ -26,6 +26,11 @@ const splitTagLabels = (labels) =>
     .map(s => s.trim())
     .filter(Boolean);
 
+// 글자수 기준(유니코드 안전)으로 잘라서 ... 붙이기
+const truncate = (s, max = 30) => {
+  const arr = Array.from(String(s ?? ''));
+  return arr.length > max ? arr.slice(0, max).join('') + '...' : String(s ?? '');
+};
 
 // 마이크로초가 붙은 ISO도 안전하게 파싱 (…SSS#### → …SSS 로 잘라냄)
 const parseDateSafe = (iso) => {
@@ -159,7 +164,8 @@ function renderOneItem(item, listNumber) {
   const tags3     = tagsAll.slice(0,3);
   const tags3Line = tags3.join('  ');
   const detailTag = tagsAll.join('  ');
-  const content   = item.content ?? '';
+  const contentFull = item.content ?? '';
+  const contentTrim = truncate(contentFull, 30);
   const option    = item.optionType ?? '';
   const imgUrl = item.productImageId
     ? `/api/review/product-images/${item.productImageId}`
@@ -194,7 +200,7 @@ function renderOneItem(item, listNumber) {
             <div>${escapeHTML(tags3Line)}</div>
           </div>
           <div class="reviewFourth">
-            <div class="fourthText">${escapeHTML(content)}</div>
+            <div class="fourthText">${escapeHTML(contentTrim)}</div>
           </div>
         </div>
         <div class="review-button">
@@ -220,7 +226,7 @@ function renderOneItem(item, listNumber) {
           </div>
           <div class="detailTag">${escapeHTML(detailTag)}</div>
           <div class="detailText">
-            ${escapeHTML(content)}
+            ${escapeHTML(contentFull)}
           </div>
         </div>
       </div>
@@ -322,3 +328,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   await fetchTotalCount();
   await getBbs(1, PAGE_SIZE);
 });
+
+
+window.initRatingDisplays = function() {
+  const labels = {
+    1: "매우 불만",
+    2: "불만",
+    3: "보통",
+    4: "만족",
+    5: "매우 만족"
+  };
+
+  const MAX = 5;
+  document.querySelectorAll('.reviewSecond').forEach(root => {
+    const starBox = root.querySelector('.star-rating');
+    const fillBox = starBox.querySelector('.star-fill');
+    const labelEl = root.querySelector('.star-label');
+
+    const raw = parseFloat(starBox.dataset.score ?? "0");
+    const score = Math.round(Math.max(1, Math.min(MAX, raw)));
+    const percent = (raw / MAX) * 100;
+
+    fillBox.style.width = `${percent}%`;
+    labelEl.textContent = labels[score];
+  });
+};
